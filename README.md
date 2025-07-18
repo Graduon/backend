@@ -1,6 +1,13 @@
 # backend
 
+## TODO
+
+- [ ]: email 기반 로그인
+- [ ]: 
+
 ## 개발 준비
+
+[github 협업 관련 참고 링크](https://github.com/Qfourteen/Gamers/blob/main/docs/how_to/%EA%B8%B0%EC%97%AC_%EC%83%81%EC%84%B8.md)
 
 ```shell
 pip install -r requirements.txt

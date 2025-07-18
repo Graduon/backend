@@ -4,3 +4,6 @@ venv
 .vscode
 env.py
 __pycache__
+CLAUDE.md
+query
+*.db

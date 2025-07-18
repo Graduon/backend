@@ -1,2 +1,6 @@
 fastapi
 uvicorn
+sqlmodel
+email-validator
+itsdangerous
+fastapi-mail
