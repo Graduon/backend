@@ -3,35 +3,39 @@ from pydantic import BaseModel, EmailStr, Field, constr
 
 class LoginRequest(BaseModel):
     email: EmailStr = Field(...,
-        examples=["alice@example.com"],
-        description="이메일 주소"
-    )
+                            examples=["alice@example.com"],
+                            description="이메일 주소"
+                            )
     password: str = Field(...,
-        min_length=4,
-        max_length=300,
-        examples=["alice123"],
-        description="비밀번호"
-    )
+                          min_length=4,
+                          max_length=300,
+                          examples=["alice123"],
+                          description="비밀번호"
+                          )
+
 
 SignupRequest = LoginRequest
 
+
 class PasswordResetRequest(BaseModel):
-    email: EmailStr
+    email: EmailStr = Field(..., examples=["alice@example.com"], description="이메일 주소")
+
 
 class PasswordResetConfirm(BaseModel):
-    email: EmailStr
-    code: constr(min_length=6, max_length=6)
-    new_password: str
+    email: EmailStr = Field(..., examples=["alice@example.com"], description="이메일 주소")
+    code: constr(min_length=6, max_length=6) = Field(..., description="이메일로 보낸 인증 코드 6자리")
+    new_password: str = Field(...,
+                              min_length=4,
+                              max_length=300,
+                              examples=["alice123"],
+                              description="비밀번호"
+                              )
+
 
 class EmailVerificationRequest(BaseModel):
-    email: EmailStr
+    email: EmailStr = Field(..., examples=["alice@example.com"], description="이메일 주소")
+
 
 class EmailVerificationConfirm(BaseModel):
     email: EmailStr
-    code: constr(min_length=6, max_length=6)
-
-if __name__ == '__main__':
-    login = LoginRequest(email='ncubeteam1@gmail.com', password='<PASSWORD>')
-    print(login)
-    print(login.model_dump(), type(login.model_dump()))
-    print(len(login.email), len(login.password))
+    code: constr(min_length=6, max_length=6) = Field(..., description="이메일로 보낸 인증 코드 6자리")
