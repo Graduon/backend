@@ -127,16 +127,25 @@ async def email_login(login_request: LoginRequest, response: Response):
     보안상의 이유로, 이메일이나 비밀번호를 틀린 경우, 어떤 것을 틀렸는지 알려주지 않습니다.
     프론트엔드에서 이를 구현할 때 참고하세요.
 
-    `206` 상태 응답이 오면 이메일 인증 코드를 보내고, 입력할 수 있도록 적절히 안내해야 합니다.
+    `206` 상태 응답이 오면 이메일 인증 코드를 요청하고, 입력할 수 있도록 적절히 안내해야 합니다.
     """
     with Session(engine) as session:
         user = authenticate_user(session, login_request.email, login_request.password)
-        response.set_cookie(
-            key='auth',
-            value=cookie_generate(user.email),
-            httponly=True,
-            secure=True,
-        )
+        if login_request.session_continue:
+            response.set_cookie(
+                key='auth',
+                value=cookie_generate(user.email),
+                httponly=True,
+                secure=True,
+                max_age=365 * 24 * 60 * 60,
+            )
+        else:
+            response.set_cookie(
+                key='auth',
+                value=cookie_generate(user.email),
+                httponly=True,
+                secure=True,
+            )
         response.status_code = status.HTTP_204_NO_CONTENT
         return response
 

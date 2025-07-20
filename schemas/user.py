@@ -12,9 +12,20 @@ class LoginRequest(BaseModel):
                           examples=["alice123"],
                           description="비밀번호"
                           )
+    session_continue: bool = Field(default=False, description="로그인 유지 여부")
 
 
-SignupRequest = LoginRequest
+class SignupRequest(BaseModel):
+    email: EmailStr = Field(...,
+                            examples=["alice@example.com"],
+                            description="이메일 주소"
+                            )
+    password: str = Field(...,
+                          min_length=4,
+                          max_length=300,
+                          examples=["alice123"],
+                          description="비밀번호"
+                          )
 
 
 class PasswordResetRequest(BaseModel):
