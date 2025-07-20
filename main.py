@@ -359,9 +359,6 @@ def confirm_signup_email_verification(request: EmailVerificationConfirm):
 @app.post("/reset-password/request",
       status_code=status.HTTP_200_OK,
       summary="이메일 재설정용 코드 송신",
-      description="""
-
-      """,
       response_description="이메일 송신 완료",
       responses={
           200: {"description": "이메일 송신 완료"},
