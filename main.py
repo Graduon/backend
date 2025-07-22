@@ -3,6 +3,7 @@ from fastapi import FastAPI, Response, status
 from sqlmodel import create_engine, SQLModel
 # 직접 작성한 모듈
 from auth import router as auth_router
+from google_auth import router as google_auth_router
 from env import DATABASE_URL
 
 app = FastAPI(
@@ -15,6 +16,7 @@ SQLModel.metadata.create_all(engine)
 
 # Include routers
 app.include_router(auth_router)
+app.include_router(google_auth_router)
 
 
 
@@ -36,3 +38,5 @@ async def does_server_alive(response: Response) -> Response:
     """
     response.status_code = status.HTTP_204_NO_CONTENT
     return response
+
+
