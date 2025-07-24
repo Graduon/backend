@@ -7,6 +7,7 @@ __pycache__
 CLAUDE.md
 query
 *.db
+.claude
 
 # SSL certificates (development only)
 ssl/
