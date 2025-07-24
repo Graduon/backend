@@ -18,12 +18,8 @@ from env import (DATABASE_URL, COOKIE_KEY, CODE_EXPIRE_SECONDS, MAX_VERIFICATION
 
 router = APIRouter(tags=["인증"])
 
-# Dependencies
-def get_engine():
-    return create_engine(DATABASE_URL, echo=True)
-
-def get_serializer():
-    return itsdangerous.URLSafeSerializer(COOKIE_KEY)
+# Dependencies - 이제 auth_utils에서 import
+from auth_utils import get_engine, get_serializer, cookie_generate, cookie_load
 
 def get_fastmail():
     from fastapi_mail import ConnectionConfig
@@ -42,17 +38,6 @@ def get_fastmail():
     return FastMail(conf)
 
 
-def cookie_generate(original_string: str, serializer: itsdangerous.URLSafeSerializer) -> str:
-    """쿠키 값 서명"""
-    return serializer.dumps(original_string)
-
-
-def cookie_load(cookie_string: str, serializer: itsdangerous.URLSafeSerializer) -> Optional[str]:
-    """쿠키 복호화 및 검증"""
-    try:
-        return serializer.loads(cookie_string)
-    except itsdangerous.BadSignature:
-        return None
 
 
 def hash_password(password: str) -> str:

@@ -1,5 +1,8 @@
 from sqlmodel import SQLModel, create_engine
 from models.user import User  # 모델이 정의된 파일로부터 import
+from models.google_user import GoogleUser  # Google OAuth2 사용자 모델 import
+from models.naver_user import NaverUser  # Naver OAuth2 사용자 모델 import
+from models.kakao_user import KakaoUser  # Kakao OAuth2 사용자 모델 import
 # SQLite 경로: 로컬 파일 (필요시 :memory: 사용 가능)
 from env import DATABASE_URL
 

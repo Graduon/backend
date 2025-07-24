@@ -3,6 +3,9 @@ from fastapi import FastAPI, Response, status
 from sqlmodel import create_engine, SQLModel
 # 직접 작성한 모듈
 from auth import router as auth_router
+from google_auth import router as google_auth_router
+from naver_auth import router as naver_auth_router
+from kakao_auth import router as kakao_auth_router
 from env import DATABASE_URL
 
 app = FastAPI(
@@ -15,6 +18,9 @@ SQLModel.metadata.create_all(engine)
 
 # Include routers
 app.include_router(auth_router)
+app.include_router(google_auth_router)
+app.include_router(naver_auth_router)
+app.include_router(kakao_auth_router)
 
 
 
@@ -34,5 +40,21 @@ async def does_server_alive(response: Response) -> Response:
     ## 프론트엔드 지침
     서버가 살아있는지 확인할 때 사용할 수 있는 다재다능한 API입니다.
     """
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return response
+
+
+@app.get("/logout",
+         status_code=status.HTTP_204_NO_CONTENT,
+         summary="로그아웃",
+         description="어떤 방식으로 로그인했건, 모두 로그아웃되게 만들 수 있습니다.",
+         responses={
+             204: {"description": "로그아웃 성공"},
+         })
+async def logout(response: Response) -> Response:
+    response.set_cookie(key="auth", value=" ", max_age=0)
+    response.set_cookie(key="auth-google", value=" ", max_age=0)
+    response.set_cookie(key="auth-naver", value=" ", max_age=0)
+    response.set_cookie(key="auth-kakao", value=" ", max_age=0)
     response.status_code = status.HTTP_204_NO_CONTENT
     return response
