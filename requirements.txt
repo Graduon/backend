@@ -6,3 +6,4 @@ itsdangerous
 fastapi-mail
 google-api-python-client
 google-auth-oauthlib
+httpx
