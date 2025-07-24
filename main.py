@@ -44,3 +44,17 @@ async def does_server_alive(response: Response) -> Response:
     return response
 
 
+@app.get("/logout",
+         status_code=status.HTTP_204_NO_CONTENT,
+         summary="로그아웃",
+         description="어떤 방식으로 로그인했건, 모두 로그아웃되게 만들 수 있습니다.",
+         responses={
+             204: {"description": "로그아웃 성공"},
+         })
+async def logout(response: Response) -> Response:
+    response.set_cookie(key="auth", value=" ", max_age=0)
+    response.set_cookie(key="auth-google", value=" ", max_age=0)
+    response.set_cookie(key="auth-naver", value=" ", max_age=0)
+    response.set_cookie(key="auth-kakao", value=" ", max_age=0)
+    response.status_code = status.HTTP_204_NO_CONTENT
+    return response
