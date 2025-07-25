@@ -1,4 +1,4 @@
-# database.py
+# course_database.py
 from typing import Dict, List, Union 
 from models import Course, YearEnum 
 

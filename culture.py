@@ -1,4 +1,4 @@
-# main.py
+# culture.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import grades, course_options # 라우터 임포트

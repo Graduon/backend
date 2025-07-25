@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List, Dict, Union
 from models import GradeValue, YearEnum # 모델 임포트
-from database import COURSES_BY_YEAR # 데이터베이스 임포트
+from course_database import COURSES_BY_YEAR # 데이터베이스 임포트
 
 router = APIRouter()
 
