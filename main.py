@@ -6,6 +6,8 @@ from auth import router as auth_router
 from google_auth import router as google_auth_router
 from naver_auth import router as naver_auth_router
 from kakao_auth import router as kakao_auth_router
+from culture.course_options import router as course_options_router
+from culture.grades import router as grades_router
 from env import DATABASE_URL
 
 app = FastAPI(
@@ -21,6 +23,8 @@ app.include_router(auth_router)
 app.include_router(google_auth_router)
 app.include_router(naver_auth_router)
 app.include_router(kakao_auth_router)
+app.include_router(course_options_router, prefix="/culture", tags=["교양과목"])
+app.include_router(grades_router, prefix="/culture", tags=["성적관리"])
 
 
 
