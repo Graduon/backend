@@ -234,7 +234,7 @@ async def kakao_callback(request: Request, response: Response, code: str = None,
             
             # auth-kakao 쿠키 생성 및 설정
             serializer = get_serializer()
-            cookie_value = cookie_generate(str(user.id), serializer)
+            cookie_value = cookie_generate(str(user.kakao_id), serializer)
             
             response.set_cookie(
                 key='auth-kakao',

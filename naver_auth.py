@@ -239,7 +239,7 @@ async def naver_callback(request: Request, response: Response, code: str = None,
             
             # auth-naver 쿠키 생성 및 설정
             serializer = get_serializer()
-            cookie_value = cookie_generate(str(user.id), serializer)
+            cookie_value = cookie_generate(str(user.naver_id), serializer)
             
             response.set_cookie(
                 key='auth-naver',

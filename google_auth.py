@@ -203,7 +203,7 @@ async def google_callback(request: Request, response: Response):
             
             # auth-google 쿠키 생성 및 설정
             serializer = get_serializer()
-            cookie_value = cookie_generate(str(user.id), serializer)
+            cookie_value = cookie_generate(str(user.google_id), serializer)
             
             response.set_cookie(
                 key='auth-google',
