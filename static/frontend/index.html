@@ -21,7 +21,7 @@
 </head>
 <body >
   <div class="container d-flex align-items-center justify-content-center">
-    <div class="row col-6 p-5 rounded">
+    <div class="row col-lg-6 p-5 rounded">
       <div class="text-center mb-4">
         <img src="/static/asset/KakaoTalk_Photo.png" alt="Graduon 로고" class="img-fluid" style="height: 280px;">
       </div>
@@ -60,9 +60,26 @@
       </div>
 
       <!-- 소셜 로그인 -->
-      <button class="btn btn-light w-100 mb-2" onclick="location.href='/auth/google/login'">G Google 로그인</button>
-      <button class="btn btn-success w-100 mb-2" onclick="location.href='/auth/naver/login'">N 네이버 로그인</button>
-      <button class="btn btn-warning w-100" onclick="location.href='/auth/kakao/login'">🗨 카카오 로그인</button>
+        <div class="text-center">
+            <img src="/static/asset/web_light_rd_ctn@2x.png" class="mb-2"
+                 onclick="location.href='/auth/google/login'"
+                title="continue with google"
+                 alt="continue with google"
+                 style="cursor: pointer; width: 366px; max-width: 100%; height: auto;"
+            >
+            <img src="/static/asset/btnW_완성형.png" class="mb-2 border border-1 border-dark"
+                 onclick="location.href='/auth/naver/login'"
+                title="continue with naver"
+                 alt="continue with naver"
+                 style="cursor: pointer; width: 366px; max-width: 100%; height: auto;"
+            >
+            <img src="/static/asset/kakao_login_large_narrow.png" class="mb-2"
+                 onclick="location.href='/auth/kakao/login'"
+                title="continue with kakao"
+                 alt="continue with kakao"
+                 style="cursor: pointer; max-width: 100%; height: auto;"
+            >
+        </div>
     </div>
   </div>
 
