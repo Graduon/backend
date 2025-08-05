@@ -1,5 +1,7 @@
 # 외부 라이브러리
 from fastapi import FastAPI, Response, status, HTTPException, Request, Depends
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlmodel import create_engine, SQLModel, Session, select
 from typing import Optional, Union, List
 # 직접 작성한 모듈
@@ -31,6 +33,24 @@ app.include_router(auth_router)
 app.include_router(google_auth_router)
 app.include_router(naver_auth_router)
 app.include_router(kakao_auth_router)
+
+# Static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/",
+         summary="홈페이지",
+         description="메인 로그인 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def home():
+    """
+    메인 로그인 페이지를 반환합니다.
+    
+    ## 프론트엔드 지침
+    - 이 페이지에서 이메일 로그인 또는 소셜 로그인을 할 수 있습니다
+    - 로그인 성공 시 적절한 대시보드 페이지로 리다이렉트됩니다
+    """
+    return FileResponse("static/frontend/index.html")
 
 
 @app.get("/ping",

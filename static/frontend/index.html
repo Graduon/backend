@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Graduon - 한국외국어대학교 컴퓨터공학부 졸업 요건 관리 서비스">
+  <meta name="keywords" content="한국외국어대학교, 컴퓨터공학부, 졸업요건, 학점관리">
+  <meta name="author" content="Graduon Team">
+  <title>Graduon 로그인</title>
+
+  <!-- Favicon 연결 -->
+  <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+  <!-- Bootstrap CSS 연결 -->
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+</head>
+<body >
+  <div class="container d-flex align-items-center justify-content-center">
+    <div class="row col-6 p-5 rounded">
+      <div class="text-center mb-4">
+        <img src="/static/asset/KakaoTalk_Photo.png" alt="Graduon 로고" class="img-fluid" style="height: 280px;">
+      </div>
+
+      <!-- 로그인 입력 영역 -->
+      <div class="mb-3">
+        <input type="email" id="emailInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="이메일 주소" required>
+      </div>
+
+      <div class="mb-1">
+        <input type="password" id="passwordInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="비밀번호" required>
+      </div>
+
+      <div class="d-flex justify-content-between mb-2 px-1 small">
+        <a href="/forgot-password" class="text-primary text-decoration-none">비밀번호를 잊어버리셨나요?</a>
+        <a href="/signup" class="text-primary text-decoration-none">회원가입</a>
+      </div>
+
+      <!-- 로그인 상태 유지 줄 -->
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="rememberMe">
+        <label class="form-check-label" for="rememberMe">로그인 상태 유지</label>
+      </div>
+
+      <!-- 로그인 버튼 -->
+      <button id="loginBtn" class="btn btn-primary w-100 py-3 fw-bold rounded-pill">
+        로그인
+      </button>
+
+      <div class="d-flex align-items-center my-4">
+        <hr class="flex-grow-1">
+        <span class="px-3 text-muted small">또는</span>
+        <hr class="flex-grow-1">
+      </div>
+
+      <!-- 소셜 로그인 -->
+      <button class="btn btn-light w-100 mb-2" onclick="location.href='/auth/google/login'">G Google 로그인</button>
+      <button class="btn btn-success w-100 mb-2" onclick="location.href='/auth/naver/login'">N 네이버 로그인</button>
+      <button class="btn btn-warning w-100" onclick="location.href='/auth/kakao/login'">🗨 카카오 로그인</button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS 연결 -->
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // 로그인 처리 함수
+    async function handleLogin() {
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+      const rememberMe = document.getElementById('rememberMe');
+
+      // 입력값 검증
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email) {
+        showAlert('이메일을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        showAlert('올바른 이메일 형식을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!password) {
+        showAlert('비밀번호를 입력해주세요.', 'warning');
+        passwordInput.focus();
+        return;
+      }
+
+      if (password.length < 4) {
+        showAlert('비밀번호는 4자 이상이어야 합니다.', 'warning');
+        passwordInput.focus();
+        return;
+      }
+
+      // 로딩 상태 설정
+      setLoadingState(true);
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            session_continue: rememberMe.checked
+          })
+        });
+
+        if (response.status === 204) {
+          // 로그인 성공
+          showAlert('로그인에 성공했습니다!', 'success');
+          // 대시보드나 메인 페이지로 리다이렉트 (임시로 새로고침)
+          setTimeout(() => {
+            window.location.href = '/dashboard'; // TODO 실제 URL로 변경
+          }, 1000);
+        } else if (response.status === 206) {
+          // 이메일 인증 미완료
+          showAlert('이메일 인증이 완료되지 않았습니다. 이메일을 확인하고 인증을 완료해주세요.', 'warning');
+          setTimeout(() => {
+            window.location.href = '/dashboard'; // TODO 실제 URL로 변경
+          }, 1000);
+        } else if (response.status === 403) {
+          // 이메일 또는 비밀번호 오류
+          showAlert('이메일 또는 비밀번호가 올바르지 않습니다.', 'danger');
+          passwordInput.value = '';
+          passwordInput.focus();
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다. 개발자에게 문의하세요.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showAlert(`로그인 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류. 개발자에게 문의하세요.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    // 이메일 유효성 검증
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // 로딩 상태 관리
+    function setLoadingState(isLoading) {
+      const loginBtn = document.getElementById('loginBtn');
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+
+      if (isLoading) {
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>로그인 중...';
+        emailInput.disabled = true;
+        passwordInput.disabled = true;
+      } else {
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '로그인';
+        emailInput.disabled = false;
+        passwordInput.disabled = false;
+      }
+    }
+
+    // 알림 메시지 표시
+    function showAlert(message, type = 'info') {
+      // 기존 알림 제거
+      const existingAlert = document.querySelector('.alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+
+      // 새 알림 생성
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      // 로그인 버튼 위에 삽입
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtn.parentNode.insertBefore(alertDiv, loginBtn);
+
+      // 3초 후 자동 제거 (danger와 warning은 5초)
+      const timeout = (type === 'danger' || type === 'warning') ? 5000 : 3000;
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, timeout);
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', async function() {
+      const loginBtn = document.getElementById('loginBtn');
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+
+      // 로그인 버튼 클릭
+      loginBtn.addEventListener('click', handleLogin);
+
+      // Enter 키 처리
+      emailInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          passwordInput.focus();
+        }
+      });
+
+      passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          handleLogin();
+        }
+      });
+
+      // 이메일 입력 필드에 포커스
+      emailInput.focus();
+    });
+  </script>
+
+</body>
+</html>
