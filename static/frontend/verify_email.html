@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Graduon - 한국외국어대학교 컴퓨터공학부 졸업 요건 관리 서비스">
+  <meta name="keywords" content="한국외국어대학교, 컴퓨터공학부, 졸업요건, 학점관리">
+  <meta name="author" content="Graduon Team">
+  <title>이메일 확인 | Graduon</title>
+
+  <!-- Favicon 연결 -->
+  <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+  <!-- Bootstrap CSS 연결 -->
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+</head>
+<body >
+  <div class="container d-flex align-items-center justify-content-center">
+    <div class="row col-6 p-5 rounded">
+      <a class="text-center mb-4 text-decoration-none" href="/">
+        <img src="/static/asset/KakaoTalk_Photo.png" alt="Graduon 로고" class="img-fluid" style="height: 280px;">
+      </a>
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">이메일 인증 코드를 입력해주세요</h4>
+            <p>회원가입 시 사용한 이메일 주소와 인증 코드를 입력해주세요. 인증 코드를 받지 못하셨다면 "코드 요청" 버튼을 클릭하세요.</p>
+            <hr>
+            <p class="mb-0">인증 코드는 발송 후 60분간 유효합니다.</p>
+        </div>
+      <!-- 이메일 입력 영역 -->
+      <div class="mb-3">
+        <input type="email" id="emailInput" class="form-control rounded-pill px-4 py-3 bg-light border-0"
+               placeholder="이메일 주소" required>
+      </div>
+      <!-- 코드 요청 버튼 -->
+      <button id="requestBtn" class="btn btn-outline-primary w-100 py-3 mb-5 fw-bold rounded-pill">
+        인증 코드 요청
+      </button>
+
+      <!-- 인증 코드 입력 영역 -->
+      <div class="mb-3 mt-5">
+        <input type="text" id="codeInput" class="form-control rounded-pill px-4 py-3 bg-light border-0"
+               placeholder="인증 코드 (6자리)" maxlength="6" required>
+      </div>
+      <!-- 인증 완료 버튼 -->
+      <button id="verifyBtn" class="btn btn-outline-success w-100 py-3 fw-bold rounded-pill mb-3">
+        인증 확인
+      </button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS 연결 -->
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // 인증 코드 확인 처리 함수
+    async function handleVerifyCode() {
+      const emailInput = document.getElementById('emailInput');
+      const codeInput = document.getElementById('codeInput');
+
+      // 입력값 검증
+      const email = emailInput.value.trim();
+      const code = codeInput.value.trim();
+
+      if (!email) {
+        showAlert('이메일을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        showAlert('올바른 이메일 형식을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!code) {
+        showAlert('인증 코드를 입력해주세요.', 'warning');
+        codeInput.focus();
+        return;
+      }
+
+      if (code.length !== 6) {
+        showAlert('인증 코드는 6자리입니다.', 'warning');
+        codeInput.focus();
+        return;
+      }
+
+      // 로딩 상태 설정
+      setVerifyLoadingState(true);
+
+      try {
+        const response = await fetch('/signup/verify-email/confirm', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            code: code
+          })
+        });
+
+        if (response.status === 204) {
+          // 인증 성공
+          showAlert('이메일 인증이 완료되었습니다! 다시 로그인 해주세요.', 'success');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else if (response.status === 400) {
+          // 인증 실패
+          const errorData = await response.json();
+          showAlert(`인증 실패: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+          codeInput.value = '';
+          codeInput.focus();
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showAlert(`인증 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        showAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setVerifyLoadingState(false);
+      }
+    }
+
+    // 인증 코드 요청 처리 함수
+    async function handleRequestCode() {
+      const emailInput = document.getElementById('emailInput');
+
+      // 입력값 검증
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        showAlert('이메일을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        showAlert('올바른 이메일 형식을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      // 로딩 상태 설정
+      setRequestLoadingState(true);
+
+      try {
+        const response = await fetch('/signup/verify-email/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email
+          })
+        });
+
+        if (response.status === 200) {
+          // 코드 발송 성공
+          const data = await response.json();
+          showAlert(`인증 코드가 이메일로 발송되었습니다. (${data.try}회 시도)`, 'success');
+        } else if (response.status === 400) {
+          // 잘못된 요청
+          const errorData = await response.json();
+          showAlert(`요청 실패: ${errorData.detail || '잘못된 요청입니다.'}`, 'danger');
+        } else if (response.status === 429) {
+          // 요청 제한 초과
+          const errorText = await response.text();
+          showAlert(`${errorText}`, 'warning');
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showAlert(`코드 요청 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Request code error:', error);
+        showAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setRequestLoadingState(false);
+      }
+    }
+
+    // 이메일 유효성 검증
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // 인증 확인 로딩 상태 관리
+    function setVerifyLoadingState(isLoading) {
+      const verifyBtn = document.getElementById('verifyBtn');
+      const requestBtn = document.getElementById('requestBtn');
+      const emailInput = document.getElementById('emailInput');
+      const codeInput = document.getElementById('codeInput');
+
+      if (isLoading) {
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>인증 중...';
+        requestBtn.disabled = true;
+        emailInput.disabled = true;
+        codeInput.disabled = true;
+      } else {
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '인증 확인';
+        requestBtn.disabled = false;
+        emailInput.disabled = false;
+        codeInput.disabled = false;
+      }
+    }
+
+    // 코드 요청 로딩 상태 관리  
+    function setRequestLoadingState(isLoading) {
+      const requestBtn = document.getElementById('requestBtn');
+      const verifyBtn = document.getElementById('verifyBtn');
+      const emailInput = document.getElementById('emailInput');
+      const codeInput = document.getElementById('codeInput');
+
+      if (isLoading) {
+        requestBtn.disabled = true;
+        requestBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>요청 중...';
+        verifyBtn.disabled = true;
+        emailInput.disabled = true;
+        codeInput.disabled = true;
+      } else {
+        requestBtn.disabled = false;
+        requestBtn.innerHTML = '인증 코드 요청';
+        verifyBtn.disabled = false;
+        emailInput.disabled = false;
+        codeInput.disabled = false;
+      }
+    }
+
+    // 알림 메시지 표시
+    function showAlert(message, type = 'info') {
+      // 기존 알림 제거
+      const existingAlert = document.querySelector('.alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+
+      // 새 알림 생성
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      // 인증 확인 버튼 위에 삽입
+      const verifyBtn = document.getElementById('emailInput');
+      verifyBtn.parentNode.insertBefore(alertDiv, verifyBtn);
+
+      // 3초 후 자동 제거 (danger와 warning은 5초)
+      const timeout = (type === 'danger' || type === 'warning') ? 5000 : 3000;
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, timeout);
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', async function() {
+      const verifyBtn = document.getElementById('verifyBtn');
+      const requestBtn = document.getElementById('requestBtn');
+      const emailInput = document.getElementById('emailInput');
+      const codeInput = document.getElementById('codeInput');
+
+      // 인증 확인 버튼 클릭
+      verifyBtn.addEventListener('click', handleVerifyCode);
+
+      // 코드 요청 버튼 클릭
+      requestBtn.addEventListener('click', handleRequestCode);
+
+      // Enter 키 처리
+      emailInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          codeInput.focus();
+        }
+      });
+
+      codeInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          handleVerifyCode();
+        }
+      });
+
+      // 인증 코드 입력 시 자동으로 대문자 변환 및 숫자만 허용
+      codeInput.addEventListener('input', function(e) {
+        let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (value.length > 6) {
+          value = value.substring(0, 6);
+        }
+        e.target.value = value;
+      });
+
+      // 이메일 입력 필드에 포커스
+      emailInput.focus();
+    });
+  </script>
+
+</body>
+</html>

@@ -43,15 +43,21 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
          description="메인 로그인 페이지를 반환합니다.",
          response_class=FileResponse)
 async def home():
-    """
-    메인 로그인 페이지를 반환합니다.
-    
-    ## 프론트엔드 지침
-    - 이 페이지에서 이메일 로그인 또는 소셜 로그인을 할 수 있습니다
-    - 로그인 성공 시 적절한 대시보드 페이지로 리다이렉트됩니다
-    """
     return FileResponse("static/frontend/index.html")
 
+@app.get("/verify-email",
+         summary="이메일 인증 페이지",
+         description="이메일 인증 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def verify_email():
+    return FileResponse("static/frontend/verify_email.html")
+
+@app.get("/forgot-password",
+         summary="비밀번호 재설정 페이지",
+         description="비밀번호 재설정 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def forgot_password():
+    return FileResponse("static/frontend/forgot_password.html")
 
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,

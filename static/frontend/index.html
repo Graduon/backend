@@ -129,9 +129,9 @@
           }, 1000);
         } else if (response.status === 206) {
           // 이메일 인증 미완료
-          showAlert('이메일 인증이 완료되지 않았습니다. 이메일을 확인하고 인증을 완료해주세요.', 'warning');
+          showAlert('이메일 인증이 완료되지 않았습니다. 이메일을 인증을 먼저하고 로그인해주세요.', 'warning');
           setTimeout(() => {
-            window.location.href = '/dashboard'; // TODO 실제 URL로 변경
+            window.location.href = '/verify-email';
           }, 1000);
         } else if (response.status === 403) {
           // 이메일 또는 비밀번호 오류
