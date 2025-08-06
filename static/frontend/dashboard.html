@@ -245,10 +245,11 @@
         }
         
         const courses = await coursesResponse.json();
-        
+        const getCodeFromStudentId = student_id => (student_id >= "2025" ? 126 : 134);
+
         // 졸업 진행률 계산 및 업데이트
         const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
-        const graduationProgress = Math.min(Math.floor(totalCredits / 134 * 100), 100);
+        const graduationProgress = Math.min(Math.floor(totalCredits / getCodeFromStudentId(courses.student_id) * 100), 100);
         
         updateGraduationProgress(graduationProgress);
         
