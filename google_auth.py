@@ -106,18 +106,10 @@ async def google_login():
 
 
 @router.get("/callback",
-    status_code=status.HTTP_200_OK,
     summary="Google OAuth2 콜백 처리",
-    response_model=GoogleLoginSuccessResponse,
     responses={
-        200: {
-            "description": "Google 로그인 성공 및 쿠키 발급",
-            "model": GoogleLoginSuccessResponse
-        },
-        400: {
-            "description": "Google 인증 실패 또는 필수 정보 부족",
-            "model": GoogleLoginErrorResponse
-        },
+        302: {"description": "Google 로그인 성공 후 대시보드로 리다이렉트"},
+        400: {"description": "Google 인증 실패 또는 필수 정보 부족"},
         500: {"description": "서버 내부 오류"}
     })
 async def google_callback(request: Request, response: Response):
@@ -201,16 +193,20 @@ async def google_callback(request: Request, response: Response):
                 # 새 사용자 생성 (자동 회원가입)
                 user = create_google_user(session, google_id, email, name, picture)
             
-            # 다른 인증 방식의 쿠키들을 만료시킴
-            response.set_cookie(key='auth', value='', expires=0, httponly=True, secure=True)
-            response.set_cookie(key='auth-naver', value='', expires=0, httponly=True, secure=True)
-            response.set_cookie(key='auth-kakao', value='', expires=0, httponly=True, secure=True)
-            
-            # auth-google 쿠키 생성 및 설정
+            # auth-google 쿠키 생성
             serializer = get_serializer()
             cookie_value = cookie_generate(str(user.google_id), serializer)
             
-            response.set_cookie(
+            # 대시보드로 리다이렉트하면서 쿠키 설정
+            redirect_response = RedirectResponse(url="/dashboard", status_code=302)
+            
+            # 다른 인증 방식의 쿠키들을 만료시킴
+            redirect_response.set_cookie(key='auth', value='', expires=0, httponly=True, secure=True)
+            redirect_response.set_cookie(key='auth-naver', value='', expires=0, httponly=True, secure=True)
+            redirect_response.set_cookie(key='auth-kakao', value='', expires=0, httponly=True, secure=True)
+            
+            # auth-google 쿠키 설정
+            redirect_response.set_cookie(
                 key='auth-google',
                 value=cookie_value,
                 httponly=True,
@@ -218,15 +214,7 @@ async def google_callback(request: Request, response: Response):
                 max_age=365 * 24 * 60 * 60  # 1년
             )
             
-            return GoogleLoginSuccessResponse(
-                message="Google 로그인 성공",
-                user={
-                    "id": user.id,
-                    "email": user.email,
-                    "name": user.name,
-                    "picture": user.picture
-                }
-            )
+            return redirect_response
     
     except HTTPException:
         # 이미 HTTPException인 경우 다시 발생

@@ -51,7 +51,7 @@
 
       <!-- 로그아웃 링크 -->
       <div class="text-center">
-        <a href="/logout" class="text-secondary text-decoration-none">다른 계정으로 로그인하기</a>
+        <a href="/" class="text-secondary text-decoration-none">다른 계정으로 로그인하기</a>
       </div>
     </div>
   </div>
@@ -87,7 +87,6 @@
             // 이미 학생 정보가 등록되어 있는 경우 대시보드로 리다이렉트
             showAlert('이미 학생 정보가 등록되어 있습니다. 대시보드로 이동합니다.', 'info');
             setTimeout(() => {
-              // TODO: 실제 대시보드 URL로 변경
               window.location.href = '/dashboard';
             }, 1500);
             return;
@@ -194,7 +193,6 @@
           // 등록 성공
           showAlert('학생 정보가 성공적으로 등록되었습니다! 대시보드로 이동합니다.', 'success');
           setTimeout(() => {
-            // TODO: 실제 대시보드 URL로 변경
             window.location.href = '/dashboard';
           }, 2000);
         } else if (response.status === 400) {

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Graduon 메인 대시보드 – 졸업 진행률과 빠른 학점·계산기 접근 제공">
+  <meta name="keywords" content="졸업 요건, 학점 계산, 학점 관리, 한국외국어대학교, Graduon">
+  <meta name="author" content="Graduon Team">
+  <title>Graduon 대시보드</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+  <!-- Bootstrap CSS -->
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons (for nav icons) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main.container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .progress-circle {
+      width: min(200px, 60vw);
+      height: min(200px, 60vw);
+      max-width: 220px;
+      max-height: 220px;
+      margin: 2rem auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: conic-gradient(from 270deg, #0d6efd 0%, #0d6efd var(--progress, 0%), #e9ecef var(--progress, 0%), #e9ecef 100%);
+      transition: --progress 0.8s ease-in-out;
+    }
+
+    .progress-circle::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      background: #f8f9fc;
+      border-radius: 50%;
+    }
+
+    .progress-circle .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0d6efd;
+      text-align: center;
+    }
+
+    .progress-circle .progress-label {
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.8rem;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    .quick-link-card {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+      padding: 1.25rem 1rem;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .quick-link-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .quick-link-icon {
+      font-size: 1.75rem;
+      color: #0d6efd;
+    }
+
+    .bottom-nav {
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+    .bottom-nav .nav-link {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+    .bottom-nav .nav-link.active {
+      color: #0d6efd;
+      font-weight: 600;
+    }
+    .bottom-nav .nav-link .bi {
+      font-size: 1.4rem;
+      display: block;
+    }
+
+    .graduon-logo {
+      max-width: 120px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <main class="container py-3 flex-grow-1">
+    <!-- 로고 및 인사말 -->
+    <header class="mb-4">
+      <a class="d-flex align-items-center text-decoration-none" href="/">
+        <img src="/static/asset/KakaoTalk_Photo.png" alt="Graduon 로고" class="me-2 graduon-logo">
+      </a>
+    </header>
+
+    <!-- 사용자 진행률 텍스트 -->
+    <section class="text-start mb-2">
+      <h2 class="fw-semibold lh-sm" style="font-size:1.35rem;">
+        <span class="text-primary">OOO님,</span><br>
+        졸업까지 <span class="fw-bold text-success">00%</span> 남았어요!
+      </h2>
+    </section>
+
+    <!-- 진행률 원형 그래프 -->
+    <div class="progress-circle" style="--progress: 0%;">
+      <div class="progress-text">0%</div>
+      <div class="progress-label">완료</div>
+    </div>
+
+    <!-- 학점 입력 바로가기 -->
+    <section class="mb-1 text-muted small fw-semibold">학점 입력 바로가기</section>
+    <div class="quick-link-card mb-3" onclick="location.href='/grade-input';">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-pencil-fill quick-link-icon"></i>
+          <div class="fw-semibold">
+            OOO님의 학점을<br>
+            입력해주세요!
+          </div>
+        </div>
+        <i class="bi bi-chevron-right fs-5 text-muted"></i>
+      </div>
+    </div>
+
+    <!-- 계산기 바로가기 -->
+    <section class="mb-1 text-muted small fw-semibold">계산기 바로가기</section>
+    <div class="quick-link-card mb-5" onclick="location.href='/graduation-calculator';">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-calculator-fill quick-link-icon"></i>
+          <div class="fw-semibold">
+            OOO님의 졸업조건을<br>
+            계산해드릴게요!
+          </div>
+        </div>
+        <i class="bi bi-chevron-right fs-5 text-muted"></i>
+      </div>
+    </div>
+  </main>
+
+  <!-- 하단 고정 네비게이션 -->
+  <nav class="navbar bg-white bottom-nav fixed-bottom">
+    <div class="container-fluid px-0">
+      <div class="d-flex justify-content-around w-100">
+        <a class="nav-link active text-center" href="/home">
+          <i class="bi bi-house-fill"></i>
+          홈
+        </a>
+        <a class="nav-link text-center" href="/grade-management">
+          <i class="bi bi-journal-bookmark"></i>
+          학점관리
+        </a>
+        <a class="nav-link text-center" href="/course-management">
+          <i class="bi bi-list-task"></i>
+          과목관리
+        </a>
+        <a class="nav-link text-center" href="/my">
+          <i class="bi bi-person-circle"></i>
+          MY
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Bootstrap JS -->
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // 대시보드 초기화 함수
+    async function initializeDashboard() {
+      try {
+        // 학생 상태 확인
+        const response = await fetch('/student/status');
+        
+        if (response.status === 401) {
+          // 로그인이 필요한 경우
+          showAlert('로그인이 필요합니다. 로그인 페이지로 이동합니다.', 'warning');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+          return;
+        }
+        
+        if (response.status !== 200) {
+          throw new Error(`학생 상태 확인 실패: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.has_student_info) {
+          // 학생 정보가 없는 경우 학생 정보 입력 페이지로 리다이렉트
+          showAlert('학생 정보를 먼저 등록해주세요.', 'info');
+          setTimeout(() => {
+            window.location.href = '/fill-student-info';
+          }, 2000);
+          return;
+        }
+        
+        // 학생 정보가 있는 경우 대시보드 데이터 로드
+        await loadDashboardData(data.student);
+        
+      } catch (error) {
+        console.error('Dashboard initialization error:', error);
+        showAlert('대시보드를 불러오는 중 오류가 발생했습니다. 페이지를 새로고침해주세요.', 'danger');
+      }
+    }
+    
+    // 대시보드 데이터 로드 함수
+    async function loadDashboardData(student) {
+      try {
+        // 학생 이름 업데이트
+        updateStudentName(student.name);
+        
+        // 과목 데이터 로드
+        const coursesResponse = await fetch('/course/all');
+        
+        if (coursesResponse.status === 401) {
+          window.location.href = '/';
+          return;
+        }
+        
+        if (coursesResponse.status !== 200) {
+          throw new Error(`과목 데이터 로드 실패: ${coursesResponse.status}`);
+        }
+        
+        const courses = await coursesResponse.json();
+        
+        // 졸업 진행률 계산 및 업데이트
+        const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
+        const graduationProgress = Math.min(Math.floor(totalCredits / 134 * 100), 100);
+        
+        updateGraduationProgress(graduationProgress);
+        
+        showAlert(`${student.name}님, 환영합니다! 현재 졸업 학점 진행률: ${graduationProgress}%`, 'success');
+        
+      } catch (error) {
+        console.error('Dashboard data loading error:', error);
+        showAlert('대시보드 데이터를 불러오는 중 오류가 발생했습니다.', 'danger');
+      }
+    }
+    
+    // 학생 이름 업데이트 함수
+    function updateStudentName(name) {
+      // 모든 "OOO님" 텍스트를 실제 이름으로 변경
+      const elements = document.querySelectorAll('*');
+      elements.forEach(element => {
+        // 텍스트 노드만 처리
+        if (element.childNodes.length > 0) {
+          element.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              node.textContent = node.textContent.replace(/OOO님/g, `${name}님`);
+            }
+          });
+        }
+      });
+    }
+    
+    // 졸업 진행률 업데이트 함수
+    function updateGraduationProgress(progress) {
+      // 텍스트 업데이트
+      const progressText = document.querySelector('.progress-text');
+      if (progressText) {
+        progressText.textContent = `${progress}%`;
+      }
+      
+      // 헤더의 진행률 텍스트 업데이트
+      const elements = document.querySelectorAll('*');
+      elements.forEach(element => {
+        if (element.childNodes.length > 0) {
+          element.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              node.textContent = node.textContent.replace(/00%/g, `${progress}%`);
+            }
+          });
+        }
+      });
+      
+      // CSS progress bar 업데이트
+      const progressCircle = document.querySelector('.progress-circle');
+      if (progressCircle) {
+        progressCircle.style.setProperty('--progress', `${progress}%`);
+      }
+    }
+    
+    // 알림 메시지 표시 함수 (index.html과 유사하지만 대시보드용으로 수정)
+    function showAlert(message, type = 'info') {
+      // 기존 알림 제거
+      const existingAlert = document.querySelector('.alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+      
+      // 새 알림 생성
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+      alertDiv.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      
+      // body에 삽입
+      document.body.appendChild(alertDiv);
+      
+      // 3초 후 자동 제거 (danger와 warning은 5초)
+      const timeout = (type === 'danger' || type === 'warning') ? 5000 : 3000;
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, timeout);
+    }
+    
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function() {
+      // 대시보드 초기화
+      initializeDashboard();
+    });
+  </script>
+</body>
+</html>

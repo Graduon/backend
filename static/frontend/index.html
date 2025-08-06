@@ -142,7 +142,7 @@
           showAlert('로그인에 성공했습니다!', 'success');
           // 대시보드나 메인 페이지로 리다이렉트 (임시로 새로고침)
           setTimeout(() => {
-            window.location.href = '/dashboard'; // TODO 실제 URL로 변경
+            window.location.href = '/dashboard';
           }, 1000);
         } else if (response.status === 206) {
           // 이메일 인증 미완료

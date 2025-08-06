@@ -123,18 +123,10 @@ async def kakao_login():
 
 
 @router.get("/callback",
-    status_code=status.HTTP_200_OK,
     summary="카카오 OAuth2 콜백 처리",
-    response_model=KakaoLoginSuccessResponse,
     responses={
-        200: {
-            "description": "카카오 로그인 성공 및 쿠키 발급",
-            "model": KakaoLoginSuccessResponse
-        },
-        400: {
-            "description": "카카오 인증 실패 또는 필수 정보 부족",
-            "model": KakaoLoginErrorResponse
-        },
+        302: {"description": "카카오 로그인 성공 후 대시보드로 리다이렉트"},
+        400: {"description": "카카오 인증 실패 또는 필수 정보 부족"},
         500: {"description": "서버 내부 오류"}
     })
 async def kakao_callback(request: Request, response: Response, code: str = None, state: str = None, error: str = None):
@@ -232,16 +224,20 @@ async def kakao_callback(request: Request, response: Response, code: str = None,
                 # 새 사용자 생성 (자동 회원가입)
                 user = create_kakao_user(session, kakao_id, nickname, picture)
             
-            # 다른 인증 방식의 쿠키들을 만료시킴
-            response.set_cookie(key='auth', value='', expires=0, httponly=True, secure=True)
-            response.set_cookie(key='auth-google', value='', expires=0, httponly=True, secure=True)
-            response.set_cookie(key='auth-naver', value='', expires=0, httponly=True, secure=True)
-            
-            # auth-kakao 쿠키 생성 및 설정
+            # auth-kakao 쿠키 생성
             serializer = get_serializer()
             cookie_value = cookie_generate(str(user.kakao_id), serializer)
             
-            response.set_cookie(
+            # 대시보드로 리다이렉트하면서 쿠키 설정
+            redirect_response = RedirectResponse(url="/dashboard", status_code=302)
+            
+            # 다른 인증 방식의 쿠키들을 만료시킴
+            redirect_response.set_cookie(key='auth', value='', expires=0, httponly=True, secure=True)
+            redirect_response.set_cookie(key='auth-google', value='', expires=0, httponly=True, secure=True)
+            redirect_response.set_cookie(key='auth-naver', value='', expires=0, httponly=True, secure=True)
+            
+            # auth-kakao 쿠키 설정
+            redirect_response.set_cookie(
                 key='auth-kakao',
                 value=cookie_value,
                 httponly=True,
@@ -249,15 +245,7 @@ async def kakao_callback(request: Request, response: Response, code: str = None,
                 max_age=365 * 24 * 60 * 60  # 1년
             )
             
-            return KakaoLoginSuccessResponse(
-                message="카카오 로그인 성공",
-                user={
-                    "id": user.id,
-                    "kakao_id": user.kakao_id,
-                    "nickname": user.nickname,
-                    "picture": user.picture
-                }
-            )
+            return redirect_response
     
     except HTTPException:
         # 이미 HTTPException인 경우 다시 발생

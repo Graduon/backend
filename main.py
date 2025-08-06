@@ -1,7 +1,7 @@
 # 외부 라이브러리
 from fastapi import FastAPI, Response, status, HTTPException, Request, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse
 from sqlmodel import create_engine, SQLModel, Session, select
 from typing import Optional, Union, List
 # 직접 작성한 모듈
@@ -72,6 +72,13 @@ async def signup():
          response_class=FileResponse)
 async def fill_student_info():
     return FileResponse("static/frontend/fill_student_info.html")
+
+@app.get("/dashboard",
+         summary="메인 대시보드",
+         description="졸업 진행률과 학점 관리 기능을 제공하는 대시보드 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def dashboard():
+    return FileResponse("static/frontend/dashboard.html")
 
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
