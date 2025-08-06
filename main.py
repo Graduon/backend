@@ -80,6 +80,13 @@ async def fill_student_info():
 async def dashboard():
     return FileResponse("static/frontend/dashboard.html")
 
+@app.get("/grade-management",
+         summary="학점 관리 메인 페이지",
+         description="학점 관리 메인 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def grade_management():
+    return FileResponse("static/frontend/grade_management.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",
