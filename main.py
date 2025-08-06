@@ -25,7 +25,7 @@ app = FastAPI(
     description="Graduon - 한국외국어대학교 컴퓨터공학부 졸업 요건 서비스",
     version="0.1.0",
 )
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=True, pool_size=100, max_overflow=5, pool_timeout=30)
 SQLModel.metadata.create_all(engine)
 
 # Include routers
