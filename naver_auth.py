@@ -237,6 +237,11 @@ async def naver_callback(request: Request, response: Response, code: str = None,
                 # 새 사용자 생성 (자동 회원가입)
                 user = create_naver_user(session, naver_id, email, name, picture)
             
+            # 다른 인증 방식의 쿠키들을 만료시킴
+            response.set_cookie(key='auth', value='', expires=0, httponly=True, secure=True)
+            response.set_cookie(key='auth-google', value='', expires=0, httponly=True, secure=True)
+            response.set_cookie(key='auth-kakao', value='', expires=0, httponly=True, secure=True)
+            
             # auth-naver 쿠키 생성 및 설정
             serializer = get_serializer()
             cookie_value = cookie_generate(str(user.naver_id), serializer)

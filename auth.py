@@ -98,6 +98,12 @@ async def email_login(login_request: LoginRequest, response: Response, engine = 
     """
     with Session(engine) as session:
         user = authenticate_user(session, login_request.email, login_request.password)
+        
+        # 다른 인증 방식의 쿠키들을 만료시킴
+        response.set_cookie(key='auth-google', value='', expires=0, httponly=True, secure=True)
+        response.set_cookie(key='auth-naver', value='', expires=0, httponly=True, secure=True)
+        response.set_cookie(key='auth-kakao', value='', expires=0, httponly=True, secure=True)
+        
         if login_request.session_continue:
             response.set_cookie(
                 key='auth',

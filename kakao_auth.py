@@ -232,6 +232,11 @@ async def kakao_callback(request: Request, response: Response, code: str = None,
                 # 새 사용자 생성 (자동 회원가입)
                 user = create_kakao_user(session, kakao_id, nickname, picture)
             
+            # 다른 인증 방식의 쿠키들을 만료시킴
+            response.set_cookie(key='auth', value='', expires=0, httponly=True, secure=True)
+            response.set_cookie(key='auth-google', value='', expires=0, httponly=True, secure=True)
+            response.set_cookie(key='auth-naver', value='', expires=0, httponly=True, secure=True)
+            
             # auth-kakao 쿠키 생성 및 설정
             serializer = get_serializer()
             cookie_value = cookie_generate(str(user.kakao_id), serializer)
