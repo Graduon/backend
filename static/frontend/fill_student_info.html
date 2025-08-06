@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Graduon - 한국외국어대학교 컴퓨터공학부 졸업 요건 관리 서비스">
+  <meta name="keywords" content="한국외국어대학교, 컴퓨터공학부, 졸업요건, 학점관리">
+  <meta name="author" content="Graduon Team">
+  <title>학생 정보 입력 | Graduon</title>
+
+  <!-- Favicon 연결 -->
+  <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+  <!-- Bootstrap CSS 연결 -->
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+</head>
+<body>
+  <div class="container d-flex align-items-center justify-content-center">
+    <div class="row col-lg-6 p-5 rounded">
+      <a class="text-center mb-4 text-decoration-none" href="/">
+        <img src="/static/asset/KakaoTalk_Photo.png" alt="Graduon 로고" class="img-fluid" style="height: 280px;">
+      </a>
+
+      <div class="alert alert-primary" role="alert">
+        <h4 class="alert-heading">학생 정보를 입력해주세요</h4>
+        <p>Graduon을 이용하기 위해서는 학번과 이름을 등록해야 합니다. 입력하신 정보는 졸업 요건 관리에 사용됩니다.</p>
+        <hr>
+        <p class="mb-0" id="userWelcome"></p>
+      </div>
+
+      <!-- 학생 정보 입력 폼 -->
+      <div class="mb-3">
+        <input type="text" id="studentIdInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="학번 (예: 202401794)" required>
+      </div>
+
+      <div class="mb-3">
+        <input type="text" id="nameInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="이름" required>
+      </div>
+
+      <!-- 등록 버튼 -->
+      <button id="registerBtn" class="btn btn-primary w-100 py-3 fw-bold rounded-pill mb-3">
+        학생 정보 등록
+      </button>
+
+      <!-- 로그아웃 링크 -->
+      <div class="text-center">
+        <a href="/logout" class="text-secondary text-decoration-none">다른 계정으로 로그인하기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS 연결 -->
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    let currentUserInfo = null;
+    let currentAuthType = null;
+    
+    // 페이지 로드 시 사용자 상태 확인
+    async function checkUserStatus() {
+      try {
+        const response = await fetch('/student/status', {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        if (response.status === 401) {
+          // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+          showAlert('로그인이 필요합니다.', 'warning');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1500);
+          return;
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.has_student_info) {
+            // 이미 학생 정보가 등록되어 있는 경우 대시보드로 리다이렉트
+            showAlert('이미 학생 정보가 등록되어 있습니다. 대시보드로 이동합니다.', 'info');
+            setTimeout(() => {
+              // TODO: 실제 대시보드 URL로 변경
+              window.location.href = '/dashboard';
+            }, 1500);
+            return;
+          }
+          
+          // 학생 정보가 없는 경우 폼에 기존 사용자 정보 표시
+          currentUserInfo = data.user_info;
+          currentAuthType = data.auth_type;
+          populateUserInfo();
+          
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          showAlert(`상태 확인 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Status check error:', error);
+        showAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      }
+    }
+
+    // 사용자 정보에 따라 폼과 환영 메시지 설정
+    function populateUserInfo() {
+      const userWelcome = document.getElementById('userWelcome');
+      const nameInput = document.getElementById('nameInput');
+      
+      if (!currentUserInfo || !currentAuthType) {
+        return;
+      }
+      
+      let welcomeMessage = '';
+      
+      if (currentAuthType === 'email') {
+        welcomeMessage = `${currentUserInfo.email}님, 환영합니다!`;
+      } else if (currentAuthType === 'google') {
+        welcomeMessage = `${currentUserInfo.name || currentUserInfo.email}님, 환영합니다!`;
+        if (currentUserInfo.name) {
+          nameInput.value = currentUserInfo.name;
+        }
+      } else if (currentAuthType === 'naver') {
+        welcomeMessage = `${currentUserInfo.name || currentUserInfo.email}님, 환영합니다!`;
+        if (currentUserInfo.name) {
+          nameInput.value = currentUserInfo.name;
+        }
+      } else if (currentAuthType === 'kakao') {
+        welcomeMessage = `${currentUserInfo.nickname || '카카오 사용자'}님, 환영합니다!`;
+        if (currentUserInfo.nickname) {
+          nameInput.value = currentUserInfo.nickname;
+        }
+      }
+      
+      userWelcome.textContent = welcomeMessage;
+    }
+
+    // 학생 정보 등록 처리 함수
+    async function handleRegisterStudent() {
+      const studentIdInput = document.getElementById('studentIdInput');
+      const nameInput = document.getElementById('nameInput');
+
+      // 입력값 검증
+      const studentId = studentIdInput.value.trim();
+      const name = nameInput.value.trim();
+
+      if (!studentId) {
+        showAlert('학번을 입력해주세요.', 'warning');
+        studentIdInput.focus();
+        return;
+      }
+
+      if (!isValidStudentId(studentId)) {
+        showAlert('올바른 학번 형식을 입력해주세요. (예: 202012345)', 'warning');
+        studentIdInput.focus();
+        return;
+      }
+
+      if (!name) {
+        showAlert('이름을 입력해주세요.', 'warning');
+        nameInput.focus();
+        return;
+      }
+
+      if (name.length < 2 || name.length > 50) {
+        showAlert('이름은 2자 이상 50자 이하로 입력해주세요.', 'warning');
+        nameInput.focus();
+        return;
+      }
+
+      // 로딩 상태 설정
+      setLoadingState(true);
+
+      try {
+        const response = await fetch('/students', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            student_id: studentId,
+            name: name
+          })
+        });
+
+        if (response.status === 201) {
+          // 등록 성공
+          showAlert('학생 정보가 성공적으로 등록되었습니다! 대시보드로 이동합니다.', 'success');
+          setTimeout(() => {
+            // TODO: 실제 대시보드 URL로 변경
+            window.location.href = '/dashboard';
+          }, 2000);
+        } else if (response.status === 400) {
+          // 잘못된 요청
+          const errorData = await response.json();
+          showAlert(`등록 실패: ${errorData.detail || '잘못된 요청입니다.'}`, 'danger');
+        } else if (response.status === 401) {
+          // 인증 실패
+          showAlert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.', 'warning');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1500);
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showAlert(`등록 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        showAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    // 학번 유효성 검증
+    function isValidStudentId(studentId) {
+      // 6-20자의 숫자 또는 영숫자 조합
+      const studentIdRegex = /^[A-Za-z0-9]{6,20}$/;
+      return studentIdRegex.test(studentId);
+    }
+
+    // 로딩 상태 관리
+    function setLoadingState(isLoading) {
+      const registerBtn = document.getElementById('registerBtn');
+      const studentIdInput = document.getElementById('studentIdInput');
+      const nameInput = document.getElementById('nameInput');
+
+      if (isLoading) {
+        registerBtn.disabled = true;
+        registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>등록 중...';
+        studentIdInput.disabled = true;
+        nameInput.disabled = true;
+      } else {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '학생 정보 등록';
+        studentIdInput.disabled = false;
+        nameInput.disabled = false;
+      }
+    }
+
+    // 알림 메시지 표시
+    function showAlert(message, type = 'info') {
+      // 기존 알림 제거
+      const existingAlert = document.querySelector('.alert:not(.alert-primary)');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+
+      // 새 알림 생성
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      // 등록 버튼 위에 삽입
+      const registerBtn = document.getElementById('registerBtn');
+      registerBtn.parentNode.insertBefore(alertDiv, registerBtn);
+
+      // 5초 후 자동 제거
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function() {
+      const registerBtn = document.getElementById('registerBtn');
+      const studentIdInput = document.getElementById('studentIdInput');
+      const nameInput = document.getElementById('nameInput');
+
+      // 페이지 로드 시 사용자 상태 확인
+      checkUserStatus();
+
+      // 등록 버튼 클릭
+      registerBtn.addEventListener('click', handleRegisterStudent);
+
+      // Enter 키 처리
+      studentIdInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          nameInput.focus();
+        }
+      });
+
+      nameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          handleRegisterStudent();
+        }
+      });
+
+      // 학번 입력 시 영숫자만 허용
+      studentIdInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/[^A-Za-z0-9]/g, '');
+        if (value.length > 20) {
+          value = value.substring(0, 20);
+        }
+        e.target.value = value;
+      });
+
+      // 학번 입력 필드에 포커스
+      studentIdInput.focus();
+    });
+  </script>
+
+</body>
+</html>

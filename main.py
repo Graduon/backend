@@ -66,6 +66,13 @@ async def forgot_password():
 async def signup():
     return FileResponse("static/frontend/email_signup.html")
 
+@app.get("/fill-student-info",
+         summary="학생 정보 입력 페이지",
+         description="로그인한 사용자의 학생 정보(학번, 이름)를 입력하는 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def fill_student_info():
+    return FileResponse("static/frontend/fill_student_info.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",
@@ -435,6 +442,71 @@ async def get_courses_by_semester(
         )
         for course in courses
     ]
+
+
+@app.get("/student/status",
+         status_code=status.HTTP_200_OK,
+         summary="학생 정보 등록 상태 확인",
+         description="현재 로그인된 사용자에게 Student 테이블에 연관된 정보가 있는지 확인합니다.",
+         responses={
+             200: {"description": "학생 정보 상태 확인 성공"},
+             401: {"description": "인증 실패 (로그인 필요)"},
+         })
+async def get_student_status(
+        auth_info: tuple[str, Union[User, GoogleUser, NaverUser, KakaoUser]] = Depends(authenticate_user_from_cookies),
+        session: Session = Depends(lambda: Session(engine))
+):
+    """
+    현재 로그인된 사용자의 학생 정보 등록 상태를 확인합니다.
+    
+    ## 프론트엔드 지침
+    - 로그인 상태에서만 호출 가능합니다
+    - 학생 정보가 등록되어 있으면 Student 정보를 반환합니다
+    - 학생 정보가 등록되지 않았으면 has_student_info: false를 반환합니다
+    - 이 API로 학생 정보 등록 페이지로 리다이렉션할지 결정할 수 있습니다
+    """
+    try:
+        # 학생 정보 조회 시도
+        student = get_student_from_auth(auth_info, session)
+        
+        # 학생 정보가 있는 경우
+        return {
+            "has_student_info": True,
+            "student": {
+                "id": student.id,
+                "student_id": student.student_id,
+                "name": student.name,
+                "user_email": student.user_email,
+                "google_user_id": student.google_user_id,
+                "naver_user_id": student.naver_user_id,
+                "kakao_user_id": student.kakao_user_id,
+                "created_at": student.created_at.isoformat(),
+                "updated_at": student.updated_at.isoformat()
+            }
+        }
+    except HTTPException as e:
+        # 학생 정보가 없는 경우 (get_student_from_auth에서 400 에러)
+        if e.status_code == status.HTTP_400_BAD_REQUEST and "학생 정보가 등록되지 않았습니다" in e.detail:
+            auth_type, user = auth_info
+            user_info = {}
+            
+            if auth_type == "email":
+                user_info = {"email": user.email}
+            elif auth_type == "google":
+                user_info = {"email": user.email, "name": user.name, "picture": user.picture}
+            elif auth_type == "naver":
+                user_info = {"email": user.email, "name": user.name, "picture": user.picture}
+            elif auth_type == "kakao":
+                user_info = {"nickname": user.nickname, "picture": user.picture}
+            
+            return {
+                "has_student_info": False,
+                "auth_type": auth_type,
+                "user_info": user_info
+            }
+        else:
+            # 다른 예외는 그대로 전파
+            raise e
 
 
 @app.get("/logout",
