@@ -59,6 +59,13 @@ async def verify_email():
 async def forgot_password():
     return FileResponse("static/frontend/forgot_password.html")
 
+@app.get("/signup",
+         summary="이메일 회원가입 페이지",
+         description="이메일 기반 회원가입 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def signup():
+    return FileResponse("static/frontend/email_signup.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",

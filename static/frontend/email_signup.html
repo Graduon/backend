@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Graduon - 한국외국어대학교 컴퓨터공학부 졸업 요건 관리 서비스">
+  <meta name="keywords" content="한국외국어대학교, 컴퓨터공학부, 졸업요건, 학점관리">
+  <meta name="author" content="Graduon Team">
+  <title>Graduon 회원가입</title>
+
+  <!-- Favicon 연결 -->
+  <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+  <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+  <!-- Bootstrap CSS 연결 -->
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+</head>
+<body>
+  <div class="container d-flex align-items-center justify-content-center">
+    <div class="row col-lg-6 p-5 rounded">
+      <a class="text-center mb-4 text-decoration-none" href="/">
+        <img src="/static/asset/KakaoTalk_Photo.png" alt="Graduon 로고" class="img-fluid" style="height: 280px;">
+      </a>
+
+      <!-- 회원가입 폼 -->
+      <div class="mb-3">
+        <input type="email" id="emailInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="이메일 주소" required>
+      </div>
+
+      <div class="mb-3">
+        <input type="password" id="passwordInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="비밀번호 (4자 이상)" required>
+      </div>
+
+      <div class="mb-3">
+        <input type="password" id="confirmPasswordInput" class="form-control rounded-pill px-4 py-3 bg-light border-0" 
+               placeholder="비밀번호 확인" required>
+      </div>
+
+      <!-- 회원가입 버튼 -->
+      <button id="signupBtn" class="btn btn-success w-100 py-3 fw-bold rounded-pill mb-3">
+        회원가입
+      </button>
+
+      <!-- 로그인 페이지로 이동 링크 -->
+      <div class="text-center">
+        <a href="/" class="text-primary text-decoration-none">이미 계정이 있으신가요? 로그인하기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이메일 인증 모달 -->
+  <div class="modal fade" id="emailVerificationModal" tabindex="-1" aria-labelledby="emailVerificationModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="emailVerificationModalLabel">이메일 인증</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-success" role="alert">
+            <h6 class="alert-heading">회원가입이 완료되었습니다!</h6>
+            <p class="mb-0">이메일 인증을 완료하면 로그인할 수 있습니다. 아래 버튼을 눌러 인증 코드를 받아주세요.</p>
+          </div>
+          
+          <div class="mb-3">
+            <label for="modalEmailDisplay" class="form-label">이메일 주소</label>
+            <input type="email" id="modalEmailDisplay" class="form-control" readonly>
+          </div>
+          
+          <div class="mb-3">
+            <button id="requestCodeBtn" class="btn btn-primary w-100 py-2 fw-bold">
+              인증 코드 요청
+            </button>
+          </div>
+          
+          <div id="codeInputSection" style="display: none;">
+            <div class="mb-3">
+              <label for="verificationCodeInput" class="form-label">인증 코드 (6자리)</label>
+              <input type="text" id="verificationCodeInput" class="form-control" 
+                     placeholder="인증 코드 입력" maxlength="6">
+            </div>
+            
+            <div class="mb-3">
+              <button id="verifyCodeBtn" class="btn btn-success w-100 py-2 fw-bold">
+                인증 확인
+              </button>
+            </div>
+          </div>
+          
+          <div class="alert alert-info mt-3" role="alert">
+            <small>
+              <strong>알림:</strong> 인증 코드는 발송 후 60분간 유효합니다.<br>
+              인증 코드를 받지 못하셨다면 스팸함을 확인해주세요.
+            </small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <small class="text-muted">인증 완료 후 로그인 페이지로 이동합니다.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS 연결 -->
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    let currentEmail = '';
+    
+    // 회원가입 처리 함수
+    async function handleSignup() {
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+      const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+
+      // 입력값 검증
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (!email) {
+        showAlert('이메일을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        showAlert('올바른 이메일 형식을 입력해주세요.', 'warning');
+        emailInput.focus();
+        return;
+      }
+
+      if (!password) {
+        showAlert('비밀번호를 입력해주세요.', 'warning');
+        passwordInput.focus();
+        return;
+      }
+
+      if (password.length < 4) {
+        showAlert('비밀번호는 4자 이상이어야 합니다.', 'warning');
+        passwordInput.focus();
+        return;
+      }
+
+      if (!confirmPassword) {
+        showAlert('비밀번호 확인을 입력해주세요.', 'warning');
+        confirmPasswordInput.focus();
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showAlert('비밀번호가 일치하지 않습니다.', 'warning');
+        confirmPasswordInput.focus();
+        return;
+      }
+
+      // 로딩 상태 설정
+      setSignupLoadingState(true);
+
+      try {
+        const response = await fetch('/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        if (response.status === 204) {
+          // 회원가입 성공
+          currentEmail = email;
+          showEmailVerificationModal();
+        } else if (response.status === 400) {
+          // 이미 가입한 이메일
+          const errorData = await response.json();
+          showAlert(`이미 등록된 이메일입니다. 로그인을 시도하거나 비밀번호를 재설정해주세요.`, 'warning');
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showAlert(`회원가입 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        showAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setSignupLoadingState(false);
+      }
+    }
+
+    // 이메일 인증 모달 표시
+    function showEmailVerificationModal() {
+      const modalEmailDisplay = document.getElementById('modalEmailDisplay');
+      modalEmailDisplay.value = currentEmail;
+      
+      const emailVerificationModal = new bootstrap.Modal(document.getElementById('emailVerificationModal'));
+      emailVerificationModal.show();
+    }
+
+    // 인증 코드 요청 처리 함수
+    async function handleRequestCode() {
+      if (!currentEmail) {
+        showModalAlert('이메일 정보가 없습니다. 페이지를 새로고침해주세요.', 'danger');
+        return;
+      }
+
+      // 로딩 상태 설정
+      setRequestCodeLoadingState(true);
+
+      try {
+        const response = await fetch('/signup/verify-email/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: currentEmail
+          })
+        });
+
+        if (response.status === 200) {
+          // 코드 발송 성공
+          const data = await response.json();
+          showModalAlert(`인증 코드가 이메일로 발송되었습니다. (${data.try}회 시도)`, 'success');
+          showCodeInputSection();
+        } else if (response.status === 400) {
+          // 잘못된 요청
+          const errorData = await response.json();
+          showModalAlert(`요청 실패: ${errorData.detail || '잘못된 요청입니다.'}`, 'danger');
+        } else if (response.status === 429) {
+          // 요청 제한 초과
+          const errorText = await response.text();
+          showModalAlert(`${errorText}`, 'warning');
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showModalAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showModalAlert(`코드 요청 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Request code error:', error);
+        showModalAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setRequestCodeLoadingState(false);
+      }
+    }
+
+    // 인증 코드 확인 처리 함수
+    async function handleVerifyCode() {
+      const verificationCodeInput = document.getElementById('verificationCodeInput');
+      const code = verificationCodeInput.value.trim();
+
+      if (!code) {
+        showModalAlert('인증 코드를 입력해주세요.', 'warning');
+        verificationCodeInput.focus();
+        return;
+      }
+
+      if (code.length !== 6) {
+        showModalAlert('인증 코드는 6자리입니다.', 'warning');
+        verificationCodeInput.focus();
+        return;
+      }
+
+      // 로딩 상태 설정
+      setVerifyCodeLoadingState(true);
+
+      try {
+        const response = await fetch('/signup/verify-email/confirm', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: currentEmail,
+            code: code
+          })
+        });
+
+        if (response.status === 204) {
+          // 인증 성공
+          showModalAlert('이메일 인증이 완료되었습니다! 잠시 후 로그인 페이지로 이동합니다.', 'success');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        } else if (response.status === 400) {
+          // 인증 실패
+          const errorData = await response.json();
+          showModalAlert(`인증 실패: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+          verificationCodeInput.value = '';
+          verificationCodeInput.focus();
+        } else if (response.status === 422) {
+          // 유효성 검증 실패
+          const errorData = await response.json();
+          showModalAlert(`입력값 오류: ${errorData.detail || '유효하지 않은 입력입니다.'}`, 'danger');
+        } else {
+          // 기타 오류
+          const errorData = await response.json().catch(() => ({}));
+          showModalAlert(`인증 중 오류가 발생했습니다: ${errorData.detail || '알 수 없는 오류입니다.'}`, 'danger');
+        }
+      } catch (error) {
+        console.error('Verification error:', error);
+        showModalAlert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', 'danger');
+      } finally {
+        setVerifyCodeLoadingState(false);
+      }
+    }
+
+    // 코드 입력 섹션 표시
+    function showCodeInputSection() {
+      document.getElementById('codeInputSection').style.display = 'block';
+      document.getElementById('verificationCodeInput').focus();
+    }
+
+    // 이메일 유효성 검증
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // 회원가입 로딩 상태 관리
+    function setSignupLoadingState(isLoading) {
+      const signupBtn = document.getElementById('signupBtn');
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+      const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+
+      if (isLoading) {
+        signupBtn.disabled = true;
+        signupBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>가입 중...';
+        emailInput.disabled = true;
+        passwordInput.disabled = true;
+        confirmPasswordInput.disabled = true;
+      } else {
+        signupBtn.disabled = false;
+        signupBtn.innerHTML = '회원가입';
+        emailInput.disabled = false;
+        passwordInput.disabled = false;
+        confirmPasswordInput.disabled = false;
+      }
+    }
+
+    // 코드 요청 로딩 상태 관리  
+    function setRequestCodeLoadingState(isLoading) {
+      const requestCodeBtn = document.getElementById('requestCodeBtn');
+      const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+      const verificationCodeInput = document.getElementById('verificationCodeInput');
+
+      if (isLoading) {
+        requestCodeBtn.disabled = true;
+        requestCodeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>요청 중...';
+        if (verifyCodeBtn) verifyCodeBtn.disabled = true;
+        if (verificationCodeInput) verificationCodeInput.disabled = true;
+      } else {
+        requestCodeBtn.disabled = false;
+        requestCodeBtn.innerHTML = '인증 코드 요청';
+        if (verifyCodeBtn) verifyCodeBtn.disabled = false;
+        if (verificationCodeInput) verificationCodeInput.disabled = false;
+      }
+    }
+
+    // 코드 확인 로딩 상태 관리
+    function setVerifyCodeLoadingState(isLoading) {
+      const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+      const requestCodeBtn = document.getElementById('requestCodeBtn');
+      const verificationCodeInput = document.getElementById('verificationCodeInput');
+
+      if (isLoading) {
+        verifyCodeBtn.disabled = true;
+        verifyCodeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>인증 중...';
+        requestCodeBtn.disabled = true;
+        verificationCodeInput.disabled = true;
+      } else {
+        verifyCodeBtn.disabled = false;
+        verifyCodeBtn.innerHTML = '인증 확인';
+        requestCodeBtn.disabled = false;
+        verificationCodeInput.disabled = false;
+      }
+    }
+
+    // 메인 페이지 알림 메시지 표시
+    function showAlert(message, type = 'info') {
+      // 기존 알림 제거
+      const existingAlert = document.querySelector('.alert:not(.alert-info)');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+
+      // 새 알림 생성
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      // 회원가입 버튼 위에 삽입
+      const signupBtn = document.getElementById('signupBtn');
+      signupBtn.parentNode.insertBefore(alertDiv, signupBtn);
+
+      // 5초 후 자동 제거
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+
+    // 모달 내 알림 메시지 표시
+    function showModalAlert(message, type = 'info') {
+      // 기존 모달 알림 제거
+      const existingModalAlert = document.querySelector('#emailVerificationModal .modal-alert');
+      if (existingModalAlert) {
+        existingModalAlert.remove();
+      }
+
+      // 새 모달 알림 생성
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show modal-alert`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      // 모달 바디 맨 위에 삽입
+      const modalBody = document.querySelector('#emailVerificationModal .modal-body');
+      modalBody.insertBefore(alertDiv, modalBody.firstChild);
+
+      // 5초 후 자동 제거 (success는 더 오래)
+      const timeout = type === 'success' ? 2000 : 5000;
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, timeout);
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function() {
+      const signupBtn = document.getElementById('signupBtn');
+      const requestCodeBtn = document.getElementById('requestCodeBtn');
+      const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+      const emailInput = document.getElementById('emailInput');
+      const passwordInput = document.getElementById('passwordInput');
+      const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+      const verificationCodeInput = document.getElementById('verificationCodeInput');
+
+      // 회원가입 버튼 클릭
+      signupBtn.addEventListener('click', handleSignup);
+
+      // 코드 요청 버튼 클릭
+      requestCodeBtn.addEventListener('click', handleRequestCode);
+
+      // 인증 확인 버튼 클릭
+      verifyCodeBtn.addEventListener('click', handleVerifyCode);
+
+      // Enter 키 처리
+      emailInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          passwordInput.focus();
+        }
+      });
+
+      passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          confirmPasswordInput.focus();
+        }
+      });
+
+      confirmPasswordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          handleSignup();
+        }
+      });
+
+      verificationCodeInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          handleVerifyCode();
+        }
+      });
+
+      // 인증 코드 입력 시 자동으로 대문자 변환 및 숫자와 영문자만 허용
+      verificationCodeInput.addEventListener('input', function(e) {
+        let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (value.length > 6) {
+          value = value.substring(0, 6);
+        }
+        e.target.value = value;
+      });
+
+      // 이메일 입력 필드에 포커스
+      emailInput.focus();
+    });
+  </script>
+
+</body>
+</html>
