@@ -87,6 +87,13 @@ async def dashboard():
 async def grade_management():
     return FileResponse("static/frontend/grade_management.html")
 
+@app.get("/grade-input",
+         summary="학점 입력 페이지",
+         description="학점 입력 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def grade_input():
+    return FileResponse("static/frontend/credit_input.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",

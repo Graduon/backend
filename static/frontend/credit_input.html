@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Graduon 메인 대시보드 – 졸업 진행률과 빠른 학점·계산기 접근 제공">
+    <meta name="keywords" content="졸업 요건, 학점 계산, 학점 관리, 한국외국어대학교, Graduon">
+    <meta name="author" content="Graduon Team">
+    <title>학점관리 | Graduon</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+    <link href="/static/css/nav.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons (for nav icons) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fc;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 80px auto 80px; /* 상단 헤더, 하단 네비 고려 */
+            padding: 0 15px;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            background-color: #dee2e6;
+            color: #6c757d;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .step-circle.active {
+            background-color: #0047b3;
+            color: #fff;
+        }
+
+        .subject-group {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 헤더 -->
+<header class="fixed-top">
+    <div class="container d-flex align-items-center py-3" style="max-width:600px;">
+        <h1 class="h4 mb-0">학점관리</h1>
+    </div>
+</header>
+
+<main>
+    <!-- 소제목 -->
+    <h6 class="fw-bold mb-1">학점 입력</h6>
+    <p><span id="user-name"></span>님의 학점을 입력해주세요.</p>
+
+    <div class="d-flex justify-content-between align-items-center my-4 text-center">
+        <div class="flex-fill">
+            <div class="step-circle active">1</div>
+        </div>
+        <div class="flex-fill">
+            <div class="step-circle">2</div>
+        </div>
+        <div class="flex-fill">
+            <div class="step-circle">3</div>
+        </div>
+    </div>
+
+
+    <!-- 학년/학기 선택 -->
+    <div class="mb-4">
+        <label for="semester" class="form-label">학년/학기</label>
+        <select class="form-select" id="semester">
+            <option value="" disabled selected>학년 및 학기를 선택해주세요</option>
+            <option>1학년 1학기</option>
+            <option>1학년 2학기</option>
+            <option>2학년 1학기</option>
+            <option>2학년 2학기</option>
+            <option>3학년 1학기</option>
+            <option>3학년 2학기</option>
+            <option>4학년 1학기</option>
+            <option>4학년 2학기</option>
+            <option>기타</option>
+        </select>
+    </div>
+
+    <!-- 내 과목 입력 그룹 (반복) -->
+    <div class="subject-group mt-3">
+        <div class="row g-2 mb-2">
+            <div class="col-8">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="과목명을 입력해주세요"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <select class="form-select">
+                    <option>초수강</option>
+                    <option>재수강</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-4">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="학점"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="등급"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <select class="form-select">
+                    <option disabled selected value>전공 여부</option>
+                    <option>전공</option>
+                    <option>교양/기타</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="subject-group mt-3">
+        <div class="row g-2 mb-2">
+            <div class="col-8">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="과목명을 입력해주세요"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <select class="form-select">
+                    <option>초수강</option>
+                    <option>재수강</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-4">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="학점"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="등급"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <select class="form-select">
+                    <option disabled selected value>전공 여부</option>
+                    <option>전공</option>
+                    <option>교양/기타</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="subject-group mt-3">
+        <div class="row g-2 mb-2">
+            <div class="col-8">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="과목명을 입력해주세요"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <select class="form-select">
+                    <option>초수강</option>
+                    <option>재수강</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-4">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="학점"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <input
+                        type="text"
+                        class="form-control"
+                        placeholder="등급"
+                        required
+                />
+            </div>
+            <div class="col-4">
+                <select class="form-select">
+                    <option disabled selected value>전공 여부</option>
+                    <option>전공</option>
+                    <option>교양/기타</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- (+) 내 과목 추가하기 -->
+    <div class="d-grid mb-4">
+        <button type="button" id="add-subject-btn" class="btn btn-light border rounded-3">
+            <i class="bi bi-plus-circle me-2"></i>내 과목 추가하기
+        </button>
+    </div>
+
+    <!-- 다음 단계 버튼 -->
+    <div class="d-grid">
+        <button type="button" id="submit-btn" class="btn btn-primary btn-lg">
+            다음 단계로 <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+    </div>
+</main>
+
+<!-- 하단 네비게이션 (fixed) -->
+<nav class="navbar bg-white bottom-nav fixed-bottom">
+    <div class="container-fluid px-0">
+        <div class="d-flex justify-content-around w-100">
+            <a class="nav-link text-center" href="/dashboard">
+                <i class="bi bi-house-fill"></i>
+                홈
+            </a>
+            <a class="nav-link active text-center" href="/grade-management">
+                <i class="bi bi-journal-bookmark"></i>
+                학점관리
+            </a>
+            <a class="nav-link text-center" href="/course-management">
+                <i class="bi bi-list-task"></i>
+                과목관리
+            </a>
+            <a class="nav-link text-center" href="/my">
+                <i class="bi bi-person-circle"></i>
+                MY
+            </a>
+        </div>
+    </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    async function initializeDashboard() {
+        try {
+            // 학생 상태 확인
+            const response = await fetch('/student/status');
+
+            if (response.status === 401) {
+                // 로그인이 필요한 경우
+                showAlert('로그인이 필요합니다. 로그인 페이지로 이동합니다.', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                return;
+            }
+
+            if (response.status !== 200) {
+                throw new Error(`학생 상태 확인 실패: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.has_student_info) {
+                // 학생 정보가 없는 경우 학생 정보 입력 페이지로 리다이렉트
+                showAlert('학생 정보를 먼저 등록해주세요.', 'info');
+                setTimeout(() => {
+                    window.location.href = '/fill-student-info';
+                }, 2000);
+                return;
+            }
+
+            // 학생 정보가 있는 경우 대시보드 데이터 로드
+            await loadDashboardData(data.student);
+
+        } catch (error) {
+            console.error('Dashboard initialization error:', error);
+            showAlert('대시보드를 불러오는 중 오류가 발생했습니다. 페이지를 새로고침해주세요.', 'danger');
+        }
+    }
+
+    async function loadDashboardData(student) {
+        try {
+            // 사용자 이름 표시
+            const userNameElement = document.getElementById('user-name');
+            if (userNameElement && student && student.name) {
+                userNameElement.textContent = student.name;
+            }
+            
+        } catch (error) {
+            console.error('Dashboard data loading error:', error);
+            showAlert('데이터를 불러오는 중 오류가 발생했습니다.', 'danger');
+        }
+    }
+
+
+    // 알림 메시지 표시 함수 (index.html과 유사하지만 대시보드용으로 수정)
+    function showAlert(message, type = 'info') {
+        // 기존 알림 제거
+        const existingAlert = document.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+
+        // 새 알림 생성
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+        // body에 삽입
+        document.body.appendChild(alertDiv);
+
+        // 3초 후 자동 제거 (danger와 warning은 5초)
+        const timeout = (type === 'danger' || type === 'warning') ? 5000 : 3000;
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, timeout);
+    }
+
+
+    // 과목 그룹 추가 함수
+    function addSubjectGroup() {
+        const firstSubjectGroup = document.querySelector('.subject-group');
+        const newSubjectGroup = firstSubjectGroup.cloneNode(true);
+        
+        // 새 그룹의 모든 입력 필드 초기화
+        const inputs = newSubjectGroup.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.value = '';
+        });
+        
+        const selects = newSubjectGroup.querySelectorAll('select');
+        selects.forEach(select => {
+            select.selectedIndex = 0;
+        });
+        
+        // '내 과목 추가하기' 버튼 앞에 삽입
+        const addButton = document.getElementById('add-subject-btn').parentElement;
+        addButton.parentElement.insertBefore(newSubjectGroup, addButton);
+    }
+    
+    // 학기 변환 함수 (1학년 1학기 → 1-1, 기타 → etc)
+    function convertSemester(semesterText) {
+        if (semesterText === '기타') {
+            return 'etc';
+        }
+        
+        // "1학년 1학기" → "1-1"
+        const match = semesterText.match(/(\d+)학년\s*(\d+)학기/);
+        if (match) {
+            return `${match[1]}-${match[2]}`;
+        }
+        
+        return semesterText;
+    }
+    
+    // 등급 변환 함수 (A+ → 4.5, F → 0.0)
+    function convertGrade(gradeText) {
+        const gradeMap = {
+            'A+': 4.5, 'A': 4.0, 'A0': 4.0,
+            'B+': 3.5, 'B': 3.0, 'B0': 3.0,
+            'C+': 2.5, 'C': 2.0, 'C0': 2.0,
+            'D+': 1.5, 'D': 1.0, 'D0': 1.0,
+            'F': 0.0, 'P': 4.5, 'NP': 0.0
+        };
+        
+        // 대소문자 통일 및 공백 제거
+        const normalizedGrade = gradeText.toUpperCase().trim();
+        
+        if (gradeMap.hasOwnProperty(normalizedGrade)) {
+            return gradeMap[normalizedGrade];
+        }
+        
+        // 숫자로 입력된 경우 (0.0~4.5)
+        const numericGrade = parseFloat(gradeText);
+        if (!isNaN(numericGrade) && numericGrade >= 0.0 && numericGrade <= 4.5) {
+            return numericGrade;
+        }
+        
+        throw new Error(`잘못된 등급 형식: ${gradeText}`);
+    }
+    
+    // 빈 입력 그룹 확인 함수
+    function isSubjectGroupEmpty(subjectGroup) {
+        const courseName = subjectGroup.querySelector('input[placeholder*="과목명"]').value.trim();
+        const credits = subjectGroup.querySelector('input[placeholder*="학점"]').value.trim();
+        const grade = subjectGroup.querySelector('input[placeholder*="등급"]').value.trim();
+        
+        return !courseName && !credits && !grade;
+    }
+    
+    // 입력 그룹에서 데이터 추출 함수
+    function extractSubjectData(subjectGroup) {
+        const courseName = subjectGroup.querySelector('input[placeholder*="과목명"]').value.trim();
+        const retakeSelect = subjectGroup.querySelectorAll('select')[0];
+        const credits = parseInt(subjectGroup.querySelector('input[placeholder*="학점"]').value.trim());
+        const gradeText = subjectGroup.querySelector('input[placeholder*="등급"]').value.trim();
+        const majorSelect = subjectGroup.querySelectorAll('select')[1];
+        
+        // 전공 여부가 기본값("전공 여부")로 선택되어 있으면 오류
+        if (majorSelect.value === "전공 여부" || !majorSelect.value) {
+            throw new Error('전공 여부를 선택해주세요.');
+        }
+        
+        const isRetake = retakeSelect.value === '재수강';
+        const isMajor = majorSelect.value === '전공';
+        const grade = convertGrade(gradeText);
+        
+        return {
+            course_name: courseName,
+            credits: credits,
+            grade: grade,
+            is_major: isMajor,
+            is_retake: isRetake
+        };
+    }
+    
+    // 과목 제출 처리 함수
+    async function handleSubmitCourses() {
+        try {
+            // 로딩 상태 설정
+            setLoadingState(true);
+            
+            // 학기 선택 확인
+            const semesterSelect = document.getElementById('semester');
+            if (!semesterSelect.value) {
+                showAlert('학년/학기를 선택해주세요.', 'warning');
+                return;
+            }
+            
+            const semester = convertSemester(semesterSelect.value);
+            const subjectGroups = document.querySelectorAll('.subject-group');
+            const coursesToSubmit = [];
+            
+            // 모든 subject-group 처리
+            for (const subjectGroup of subjectGroups) {
+                // 빈 그룹은 건너뛰기
+                if (isSubjectGroupEmpty(subjectGroup)) {
+                    continue;
+                }
+                
+                try {
+                    const courseData = extractSubjectData(subjectGroup);
+                    
+                    // 필수 필드 검증
+                    if (!courseData.course_name) {
+                        showAlert('과목명을 입력해주세요.', 'warning');
+                        return;
+                    }
+                    
+                    if (isNaN(courseData.credits) || courseData.credits < 1 || courseData.credits > 10) {
+                        showAlert('학점은 1~10 사이의 숫자를 입력해주세요.', 'warning');
+                        return;
+                    }
+                    
+                    courseData.semester = semester;
+                    coursesToSubmit.push(courseData);
+                    
+                } catch (error) {
+                    showAlert(error.message, 'warning');
+                    return;
+                }
+            }
+            
+            if (coursesToSubmit.length === 0) {
+                showAlert('최소 1개의 과목을 입력해주세요.', 'warning');
+                return;
+            }
+            
+            // 각 과목별로 API 호출
+            let successCount = 0;
+            let failureCount = 0;
+            
+            for (const courseData of coursesToSubmit) {
+                try {
+                    const response = await fetch('/courses', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(courseData)
+                    });
+                    
+                    if (response.status === 201) {
+                        successCount++;
+                    } else if (response.status === 401) {
+                        showAlert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.', 'warning');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 2000);
+                        return;
+                    } else {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error(`과목 등록 실패: ${courseData.course_name}`, errorData);
+                        failureCount++;
+                    }
+                } catch (error) {
+                    console.error(`과목 등록 오류: ${courseData.course_name}`, error);
+                    failureCount++;
+                }
+            }
+            
+            // 결과 처리
+            if (successCount > 0) {
+                showAlert(`${successCount}개 과목이 성공적으로 등록되었습니다! 졸업 계산기로 이동합니다.`, 'success');
+                setTimeout(() => {
+                    window.location.href = '/graduation-calculator';
+                }, 2000);
+            } else {
+                showAlert('과목 등록에 실패했습니다. 다시 시도해주세요.', 'danger');
+            }
+            
+        } catch (error) {
+            console.error('Submit error:', error);
+            showAlert('네트워크 오류가 발생했습니다. 다시 시도해주세요.', 'danger');
+        } finally {
+            setLoadingState(false);
+        }
+    }
+    
+    // 로딩 상태 관리
+    function setLoadingState(isLoading) {
+        const submitBtn = document.getElementById('submit-btn');
+        const addBtn = document.getElementById('add-subject-btn');
+        const semesterSelect = document.getElementById('semester');
+        
+        if (isLoading) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>등록 중...';
+            addBtn.disabled = true;
+            semesterSelect.disabled = true;
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '다음 단계로 <i class="bi bi-arrow-right ms-1"></i>';
+            addBtn.disabled = false;
+            semesterSelect.disabled = false;
+        }
+    }
+    
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function () {
+        // 대시보드 초기화
+        initializeDashboard();
+        
+        // '내 과목 추가하기' 버튼 이벤트
+        document.getElementById('add-subject-btn').addEventListener('click', addSubjectGroup);
+        
+        // '다음 단계로' 버튼 이벤트
+        document.getElementById('submit-btn').addEventListener('click', handleSubmitCourses);
+    });
+</script>
+
+</body>
+</html>
