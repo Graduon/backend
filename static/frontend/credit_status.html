@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Graduon 메인 대시보드 – 졸업 진행률과 빠른 학점·계산기 접근 제공">
+    <meta name="keywords" content="졸업 요건, 학점 계산, 학점 관리, 한국외국어대학교, Graduon">
+    <meta name="author" content="Graduon Team">
+    <title>졸업요건 계산기 | Graduon</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+
+    <link href="/static/css/nav.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons (for nav icons) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fc;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 80px auto 80px; /* 상단 헤더, 하단 네비 고려 */
+            padding: 0 15px;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            background-color: #dee2e6;
+            color: #6c757d;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .step-circle.active {
+            background-color: #0047b3;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 헤더 -->
+<header class="fixed-top">
+    <div class="container d-flex align-items-center py-3" style="max-width:600px;">
+        <h1 class="h4 mb-0">학점관리</h1>
+    </div>
+</header>
+
+<main>
+    <!-- 소제목 -->
+    <h6 class="fw-bold mb-1">학기별 학점 현황</h6>
+    <p style="max-width: 60vw;">OOO님의 정보를 바탕으로 학기별 학점을 정리해 드릴게요!</p>
+
+    <div class="d-flex justify-content-between align-items-center my-4 text-center">
+        <div class="flex-fill">
+            <div class="step-circle active">1</div>
+        </div>
+        <div class="flex-fill">
+            <div class="step-circle active">2</div>
+        </div>
+        <div class="flex-fill">
+            <div class="step-circle active">3</div>
+        </div>
+    </div>
+
+    <div id="select-section">
+        <!-- 학년/학기 선택 -->
+        <div class="mb-4">
+            <label for="semester" class="form-label">학년/학기</label>
+            <select class="form-select" id="semester">
+                <option value="" disabled selected>학년 및 학기를 선택해주세요</option>
+                <option>1학년 1학기</option>
+                <option>1학년 2학기</option>
+                <option>2학년 1학기</option>
+                <option>2학년 2학기</option>
+                <option>3학년 1학기</option>
+                <option>3학년 2학기</option>
+                <option>4학년 1학기</option>
+                <option>4학년 2학기</option>
+                <option>기타</option>
+            </select>
+        </div>
+        <!-- 다음 단계 버튼 -->
+        <div class="d-grid">
+            <button type="button" id="submit-btn" class="btn btn-primary btn-lg">
+                다음 단계로 <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+</main>
+
+<!-- 하단 네비게이션 (fixed) -->
+<nav class="navbar bg-white bottom-nav fixed-bottom">
+    <div class="container-fluid px-0">
+        <div class="d-flex justify-content-around w-100">
+            <a class="nav-link text-center" href="/dashboard">
+                <i class="bi bi-house-fill"></i>
+                홈
+            </a>
+            <a class="nav-link active text-center" href="/grade-management">
+                <i class="bi bi-journal-bookmark"></i>
+                학점관리
+            </a>
+            <a class="nav-link text-center" href="/course-management">
+                <i class="bi bi-list-task"></i>
+                과목관리
+            </a>
+            <a class="nav-link text-center" href="/my">
+                <i class="bi bi-person-circle"></i>
+                MY
+            </a>
+        </div>
+    </div>
+</nav>
+
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 대시보드 초기화 함수
+    async function initializeDashboard() {
+        try {
+            // 학생 상태 확인
+            const response = await fetch('/student/status');
+
+            if (response.status === 401) {
+                // 로그인이 필요한 경우
+                showAlert('로그인이 필요합니다. 로그인 페이지로 이동합니다.', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                return;
+            }
+
+            if (response.status !== 200) {
+                throw new Error(`학생 상태 확인 실패: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!data.has_student_info) {
+                // 학생 정보가 없는 경우 학생 정보 입력 페이지로 리다이렉트
+                showAlert('학생 정보를 먼저 등록해주세요.', 'info');
+                setTimeout(() => {
+                    window.location.href = '/fill-student-info';
+                }, 2000);
+                return;
+            }
+
+            updateStudentName(data.student.name);
+
+        } catch (error) {
+            console.error('Dashboard initialization error:', error);
+            showAlert('대시보드를 불러오는 중 오류가 발생했습니다. 페이지를 새로고침해주세요.', 'danger');
+        }
+    }
+
+    // 학생 이름 업데이트 함수
+    function updateStudentName(name) {
+        // 모든 "OOO님" 텍스트를 실제 이름으로 변경
+        const elements = document.querySelectorAll('*');
+        elements.forEach(element => {
+            // 텍스트 노드만 처리
+            if (element.childNodes.length > 0) {
+                element.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        node.textContent = node.textContent.replace(/OOO님/g, `${name}님`);
+                    }
+                });
+            }
+        });
+    }
+
+    // 알림 메시지 표시 함수 (index.html과 유사하지만 대시보드용으로 수정)
+    function showAlert(message, type = 'info') {
+        // 기존 알림 제거
+        const existingAlert = document.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+
+        // 새 알림 생성
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+        // body에 삽입
+        document.body.appendChild(alertDiv);
+
+        // 3초 후 자동 제거 (danger와 warning은 5초)
+        const timeout = (type === 'danger' || type === 'warning') ? 5000 : 3000;
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, timeout);
+    }
+
+    // 학기 변환 함수 (1학년 1학기 → 1-1, 기타 → etc)
+    function convertSemester(semesterText) {
+        if (semesterText === '기타') {
+            return 'etc';
+        }
+        
+        // "1학년 1학기" → "1-1"
+        const match = semesterText.match(/(\d+)학년\s*(\d+)학기/);
+        if (match) {
+            return `${match[1]}-${match[2]}`;
+        }
+        
+        return semesterText;
+    }
+
+    // 평점 및 이수학점 계산 함수
+    function calculateGradeStats(courses) {
+        if (!courses || courses.length === 0) {
+            return { totalCredits: 0, gpa: 0.0 };
+        }
+
+        let totalCredits = 0;
+        let totalGradePoints = 0;
+
+        courses.forEach(course => {
+            totalCredits += course.credits;
+            totalGradePoints += course.credits * course.grade;
+        });
+
+        const gpa = totalCredits > 0 ? (totalGradePoints / totalCredits) : 0.0;
+        
+        return {
+            totalCredits: totalCredits,
+            gpa: Math.round(gpa * 100) / 100  // 소수점 둘째자리까지
+        };
+    }
+
+    // 학기별 학점 현황 조회 함수
+    async function fetchSemesterCourses(semester) {
+        try {
+            const response = await fetch(`/courses/semester/${semester}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.status === 401) {
+                showAlert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                return null;
+            }
+
+            if (response.status === 400) {
+                showAlert('학생 정보를 먼저 등록해주세요.', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/fill-student-info';
+                }, 2000);
+                return null;
+            }
+
+            if (response.status !== 200) {
+                throw new Error(`학기별 과목 조회 실패: ${response.status}`);
+            }
+
+            const courses = await response.json();
+            return courses;
+
+        } catch (error) {
+            console.error('Fetch semester courses error:', error);
+            showAlert('네트워크 오류가 발생했습니다. 다시 시도해주세요.', 'danger');
+            return null;
+        }
+    }
+
+    // 결과 표시 함수
+    function displayCreditResults(semester, stats, courses) {
+        const selectSection = document.getElementById('select-section');
+        
+        selectSection.innerHTML = `
+            <div class="text-center mb-4">
+                <h5 class="fw-bold">${semester === 'etc' ? '기타' : semester.replace('-', '학년 ') + '학기'} 학점 현황</h5>
+            </div>
+            
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <div class="text-muted small mb-1">평점</div>
+                            <div class="h4 fw-bold text-primary">${stats.gpa}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <div class="text-muted small mb-1">이수학점</div>
+                            <div class="h4 fw-bold text-success">${stats.totalCredits}학점</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            ${courses.length > 0 ? `
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3">과목 목록 (${courses.length}개)</h6>
+                <div class="list-group list-group-flush">
+                    ${courses.map(course => `
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-medium">${course.course_name}</div>
+                                    <small class="text-muted">
+                                        ${course.is_major ? '전공' : '교양/기타'} | 
+                                        ${course.is_retake ? '재수강' : '초수강'}
+                                    </small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold">${course.grade}</div>
+                                    <small class="text-muted">${course.credits}학점</small>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : `
+            <div class="alert alert-info text-center mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                이 학기에 등록된 과목이 없습니다.
+            </div>
+            `}
+            
+            <div class="d-grid">
+                <button type="button" id="reset-btn" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-arrow-left me-1"></i> 다른 학기 조회하기
+                </button>
+            </div>
+        `;
+
+        // 리셋 버튼 이벤트 리스너 추가
+        document.getElementById('reset-btn').addEventListener('click', resetToSelection);
+    }
+
+    // 선택 화면으로 복구 함수
+    function resetToSelection() {
+        const selectSection = document.getElementById('select-section');
+        
+        selectSection.innerHTML = `
+            <!-- 학년/학기 선택 -->
+            <div class="mb-4">
+                <label for="semester" class="form-label">학년/학기</label>
+                <select class="form-select" id="semester">
+                    <option value="" disabled selected>학년 및 학기를 선택해주세요</option>
+                    <option>1학년 1학기</option>
+                    <option>1학년 2학기</option>
+                    <option>2학년 1학기</option>
+                    <option>2학년 2학기</option>
+                    <option>3학년 1학기</option>
+                    <option>3학년 2학기</option>
+                    <option>4학년 1학기</option>
+                    <option>4학년 2학기</option>
+                    <option>기타</option>
+                </select>
+            </div>
+            <!-- 다음 단계 버튼 -->
+            <div class="d-grid">
+                <button type="button" id="submit-btn" class="btn btn-primary btn-lg">
+                    다음 단계로 <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </div>
+        `;
+
+        // 새로운 submit 버튼에 이벤트 리스너 다시 추가
+        document.getElementById('submit-btn').addEventListener('click', handleSubmitSemester);
+    }
+
+    // 로딩 상태 관리
+    function setLoadingState(isLoading) {
+        const submitBtn = document.getElementById('submit-btn');
+        const semesterSelect = document.getElementById('semester');
+        
+        if (submitBtn && semesterSelect) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>조회 중...';
+                semesterSelect.disabled = true;
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '다음 단계로 <i class="bi bi-arrow-right ms-1"></i>';
+                semesterSelect.disabled = false;
+            }
+        }
+    }
+
+    // 학기 선택 제출 처리 함수
+    async function handleSubmitSemester() {
+        try {
+            setLoadingState(true);
+            
+            const semesterSelect = document.getElementById('semester');
+            if (!semesterSelect.value) {
+                showAlert('학년/학기를 선택해주세요.', 'warning');
+                return;
+            }
+
+            const semester = convertSemester(semesterSelect.value);
+            const courses = await fetchSemesterCourses(semester);
+            
+            if (courses !== null) {
+                const stats = calculateGradeStats(courses);
+                displayCreditResults(semesterSelect.value, stats, courses);
+            }
+
+        } catch (error) {
+            console.error('Handle submit semester error:', error);
+            showAlert('오류가 발생했습니다. 다시 시도해주세요.', 'danger');
+        } finally {
+            setLoadingState(false);
+        }
+    }
+
+    // 이벤트 리스너 등록
+    document.addEventListener('DOMContentLoaded', function () {
+        // 대시보드 초기화
+        initializeDashboard();
+        
+        // 제출 버튼 이벤트 리스너
+        document.getElementById('submit-btn').addEventListener('click', handleSubmitSemester);
+    });
+</script>
+</body>
+</html>

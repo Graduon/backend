@@ -101,6 +101,13 @@ async def grade_input():
 async def graduation_calculator():
     return FileResponse("static/frontend/graduation_calculator.html")
 
+@app.get("/credit-status",
+         summary="학기별 학점 페이지",
+         description="학기별 학점 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def credit_status():
+    return FileResponse("static/frontend/credit_status.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",
