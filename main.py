@@ -510,10 +510,24 @@ async def get_student_status(
     try:
         # 학생 정보 조회 시도
         student = get_student_from_auth(auth_info, session)
+        auth_type, user = auth_info
+        
+        # OAuth 사용자 정보 추가 (프로필 이미지용)
+        auth_user_info = {}
+        if auth_type == "email":
+            auth_user_info = {"email": user.email}
+        elif auth_type == "google":
+            auth_user_info = {"email": user.email, "name": user.name, "picture": user.picture}
+        elif auth_type == "naver":
+            auth_user_info = {"email": user.email, "name": user.name, "picture": user.picture}
+        elif auth_type == "kakao":
+            auth_user_info = {"nickname": user.nickname, "picture": user.picture}
         
         # 학생 정보가 있는 경우
         return {
             "has_student_info": True,
+            "auth_type": auth_type,
+            "auth_user_info": auth_user_info,
             "student": {
                 "id": student.id,
                 "student_id": student.student_id,
