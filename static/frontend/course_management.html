@@ -3,480 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graduon - 22학년도 전공교과 이수체계도</title>
+    <title>전공교과 이수체계도 | Graduon</title>
     
-      <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
-  <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
-  <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/asset/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/asset/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/asset/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/static/asset/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/static/asset/favicon/site.webmanifest">
 
-  <link href="/static/css/nav.css" rel="stylesheet">
-
-    <!-- Bootstrap CSS CDN -->
+    <!-- Bootstrap CSS - 최우선 로드 -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- GmarketSans 글꼴 연결 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/static/css/nav.css" rel="stylesheet">
+
+    <!-- GmarketSans 글꼴 -->
     <style>
-      @font-face {
-        font-family: 'GmarketSans';
-        src: url('/static/asset/GmarketSansTTFLight.ttf') format('truetype');
-        font-weight: 300;
-      }
-      @font-face {
-        font-family: 'GmarketSans';
-        src: url('/static/asset/GmarketSansTTFMedium.ttf') format('truetype');
-        font-weight: 500;
-      }
-      @font-face {
-        font-family: 'GmarketSans';
-        src: url('/static/asset/GmarketSansTTFBold.ttf') format('truetype');
-        font-weight: 700;
-      }
-    </style>
-    
-    <style>
+        @font-face {
+            font-family: 'GmarketSans';
+            src: url('/static/asset/GmarketSansTTFLight.ttf') format('truetype');
+            font-weight: 300;
+        }
+        @font-face {
+            font-family: 'GmarketSans';
+            src: url('/static/asset/GmarketSansTTFMedium.ttf') format('truetype');
+            font-weight: 500;
+        }
+        @font-face {
+            font-family: 'GmarketSans';
+            src: url('/static/asset/GmarketSansTTFBold.ttf') format('truetype');
+            font-weight: 700;
+        }
+
+        /* 전역 스타일 - Bootstrap 우선 */
         body {
             font-family: 'GmarketSans', sans-serif !important;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-            padding-bottom: 90px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            background-color: #f0f2f5 !important;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 650px;
-            background-color: #fff;
+        /* 확대/축소를 위한 컨테이너 */
+        .scaleable-content {
+            transform-origin: top center;
+            transition: transform 0.3s ease;
+        }
+
+        /* 메인 컨테이너 */
+        .course-container {
+            max-width: 700px;
+            background-color: white;
+            min-height: 100vh;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        .main-content-wrapper {
-            flex-grow: 1;
-            padding: 0;
-            overflow-y: auto;
-            padding-bottom: 20px;
-            background-color: #ffeef2;
-            position: relative;
-        }
-
-        /* 상단 버튼 섹션 */
-        .top-buttons-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 10px;
-            gap: 5px;
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #eee;
-        }
-
-        .top-button {
-            border: none;
-            padding: 5px 8px;
-            border-radius: 5px;
-            font-size: 0.65em;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background-color 0.2s, color 0.2s;
-            font-weight: bold;
-            background-color: #e0e0e0;
-            color: #666;
-        }
-
-        .top-button.active-yellow {
-            background-color: #FFEB3B;
-            color: #333;
-        }
-
-        .top-button.active-green {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .top-button.active-gray {
-            background-color: #9E9E9E;
-            color: white;
-        }
-
-        .top-button.active-purple {
-            background-color: #9C27B0;
-            color: white;
-        }
-
-        .top-button.active-black {
-            background-color: #212121;
-            color: white;
-        }
-
-        /* 이수체계도 헤더 */
+        /* 헤더 스타일 */
         .major-flow-header {
-            padding: 10px 0;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            background-color: #fff;
-            color: #002f5e;
+            background-color: #002f5e;
+            color: white;
+            padding: 1rem;
         }
 
-        .major-flow-header h1 {
-            margin: 0;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-
-        /* 학년/학기 탭 */
+        /* 학기 탭 스타일 */
         .semester-tabs {
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
             background-color: #212121;
-            border-bottom: 1px solid #ddd;
-            position: sticky;
             top: 0;
             z-index: 10;
-        }
-
-        .semester-tabs.sub-tabs {
-            background-color: #212121;
-            border-top: none;
-        }
-
-        .semester-year {
-            flex: 1;
-            text-align: center;
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #fff;
-            padding: 5px 0;
-            background-color: #000;
-            border-right: 1px solid #333;
-        }
-
-        .semester-year:last-child {
-            border-right: none;
-        }
-
-        .semester-tab {
-            font-size: 0.8em;
-            font-weight: bold;
-            color: #fff;
-            padding: 3px 0;
-            cursor: pointer;
-            flex-grow: 1;
-            text-align: center;
-            transition: color 0.2s;
-            position: relative;
-        }
-
-        .semester-tab.active {
-            color: #fff;
         }
 
         .semester-tab.active::after {
             content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 60%;
-            height: 2px;
-            background-color: #2196F3;
+            height: 3px;
+            background-color: #0d6efd;
         }
 
-        /* 이수체계도 그리드 컨테이너 */
-        .flowchart-grid-container {
-            position: relative;
-            padding: 10px 5px;
-            min-height: 900px;
-            box-sizing: border-box;
-            background-color: #ffeef2;
-        }
-
-        /* 실제 이수체계도 박스들을 담을 컨텐츠 영역 */
+        /* 플로우차트 그리드 */
         .flowchart-content {
-            position: relative;
-            z-index: 2;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(11, minmax(45px, auto));
-            gap: 5px;
-            padding: 5px;
-            width: 100%;
-            box-sizing: border-box;
+            grid-template-rows: repeat(11, minmax(50px, auto));
+            gap: 4px;
+            padding: 10px;
+            background-color: #ffeef2;
+            min-height: 600px;
         }
 
         .grid-cell {
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 2px;
-            box-sizing: border-box;
-            border: none;
-            background-color: #ffeef2;
+            justify-content: center;
         }
 
-        /* 박스 스타일 */
         .flow-box {
             width: 100%;
-            height: 35px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.05);
+            height: 40px;
+            border-radius: 6px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            font-size: 0.6em;
-            color: #333;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: bold;
             text-align: center;
             line-height: 1.1;
-            font-weight: bold;
-            padding: 2px;
-            box-sizing: border-box;
+            padding: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* 박스 색상 정의 */
-        .grid-cell.green .flow-box { background-color: #BBF0BF; }
-        .grid-cell.lightblue .flow-box { background-color: #B2EBF2; }
-        .grid-cell.orange .flow-box { background-color: #FFCC80; }
-        .grid-cell.yellow .flow-box { background-color: #FFF9C4; }
-        .grid-cell.purple .flow-box { background-color: #E1BEE7; }
-        .grid-cell.darkblue .flow-box { background-color: #BBDEFB; }
-        .grid-cell.red .flow-box { background-color: #FFCDD2; }
-        .grid-cell.blue .flow-box { background-color: #BBDEFB; }
-
-        /* 하단 내비게이션 바 스타일 */
-        .footer-nav {
-            min-height: 70px;
-            background-color: #fff;
-            border-top: 1px solid #eee;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 400px;
-            z-index: 100;
-            padding: 5px 5px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
+        /* 색상 시스템 - Bootstrap 색상 기반 */
+        .grid-cell.white .flow-box { 
+            background-color: #ffffff;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+        .grid-cell.yellow .flow-box { 
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        .grid-cell.green .flow-box { 
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+            color: #0f5132;
+        }
+        .grid-cell.blue .flow-box { 
+            background-color: #cfe2ff;
+            border-color: #9ec5fe;
+            color: #084298;
+        }
+        .grid-cell.red .flow-box { 
+            background-color: #f8d7da;
+            border-color: #f1aeb5;
+            color: #842029;
         }
 
-        .footer-nav .nav {
-            width: 100%;
-            justify-content: space-around;
-            height: 100%;
-            align-items: center;
-        }
-
-        .nav-item {
+        /* 확대/축소 버튼 */
+        .zoom-controls {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
+            gap: 8px;
+        }
+
+        .zoom-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
-            color: #888;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-basis: 25%;
-            text-align: center;
-            padding: 5px 0;
-            height: 100%;
             justify-content: center;
-            transition: color 0.2s ease-in-out;
-        }
-
-        .nav-item.active {
-            color: #0056b3;
+            font-size: 1.2rem;
             font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: none;
         }
 
-        .nav-item img {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 4px;
-            object-fit: contain;
-            filter: grayscale(100%);
-            transition: filter 0.2s ease-in-out;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .nav-item.active img {
-            filter: grayscale(0%);
-        }
-
-        .nav-item span {
-            font-size: 0.75em;
-            line-height: 1.2;
+        /* 반응형 */
+        @media (max-width: 576px) {
+            .course-container {
+                max-width: 100%;
+            }
+            .flowchart-content {
+                padding: 5px;
+                gap: 2px;
+            }
+            .flow-box {
+                height: 35px;
+                font-size: 0.55rem;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="app-container">
-        <div class="container-fluid main-content-wrapper">
-            <!-- 상단 버튼 섹션 -->
-            <div class="top-buttons-section">
-                <button class="top-button active-yellow" data-course-type="전공교양">전공교양</button>
-                <button class="top-button" data-course-type="전공필수">전공필수</button>
-                <button class="top-button" data-course-type="전공선택 일반">전공선택 일반</button>
-                <button class="top-button" data-course-type="전공선택 컴퓨터">전공선택 컴퓨터</button>
-                <button class="top-button" data-course-type="전공선택 전자">전공선택 전자</button>
+<body class="d-flex justify-content-center">
+    <div class="course-container">
+        <div class="scaleable-content">
+            <!-- 과목 분류 표시 (버튼 대신 배지 사용) -->
+            <div class="p-3 bg-light border-bottom">
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-light text-dark border course-type-badge active" 
+                          data-course-type="전공교양" style="background-color: #ffffff !important;">
+                        전공교양
+                    </span>
+                    <span class="badge bg-warning text-dark course-type-badge" data-course-type="전공필수">
+                        전공필수
+                    </span>
+                    <span class="badge bg-success course-type-badge" data-course-type="전공선택 일반">
+                        전공선택 일반
+                    </span>
+                    <span class="badge bg-primary course-type-badge" data-course-type="전공선택 컴퓨터">
+                        전공선택 컴퓨터
+                    </span>
+                    <span class="badge bg-danger course-type-badge" data-course-type="전공선택 전자">
+                        전공선택 전자
+                    </span>
+                </div>
             </div>
 
             <!-- 헤더 -->
-            <header class="major-flow-header">
-                <h1>컴퓨터공학부 전공교과 이수체계도</h1>
+            <header class="major-flow-header text-center">
+                <h1 class="h4 mb-0">컴퓨터공학부 전공교과 이수체계도</h1>
             </header>
 
-            <!-- 학년/학기 탭 -->
-            <div class="semester-tabs">
-                <div class="semester-year">1학년</div>
-                <div class="semester-year">2학년</div>
-                <div class="semester-year">3학년</div>
-                <div class="semester-year">4학년</div>
-            </div>
-            <div class="semester-tabs sub-tabs">
-                <div class="semester-tab active" data-semester="1-1">1-1</div>
-                <div class="semester-tab" data-semester="1-2">1-2</div>
-                <div class="semester-tab" data-semester="2-1">2-1</div>
-                <div class="semester-tab" data-semester="2-2">2-2</div>
-                <div class="semester-tab" data-semester="3-1">3-1</div>
-                <div class="semester-tab" data-semester="3-2">3-2</div>
-                <div class="semester-tab" data-semester="4-1">4-1</div>
-                <div class="semester-tab" data-semester="4-2">4-2</div>
+            <!-- 학년 표시 -->
+            <div class="bg-dark text-white">
+                <div class="row g-0">
+                    <div class="col-3 text-center py-2 border-end border-secondary">
+                        <small class="fw-bold">1학년</small>
+                    </div>
+                    <div class="col-3 text-center py-2 border-end border-secondary">
+                        <small class="fw-bold">2학년</small>
+                    </div>
+                    <div class="col-3 text-center py-2 border-end border-secondary">
+                        <small class="fw-bold">3학년</small>
+                    </div>
+                    <div class="col-3 text-center py-2">
+                        <small class="fw-bold">4학년</small>
+                    </div>
+                </div>
             </div>
 
-            <!-- 이수체계도 그리드 컨테이너 -->
-            <div class="flowchart-grid-container">
-                <div class="flowchart-content" id="courseGrid">
-                    <!-- 과목 박스들이 JavaScript로 동적 생성됨 -->
+            <!-- 학기 탭 -->
+            <div class="semester-tabs bg-dark">
+                <div class="row g-0 text-center">
+                    <div class="col semester-tab position-relative py-2 text-white cursor-pointer"
+                         data-semester="1-1">
+                        <small class="fw-bold">1-1</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="1-2">
+                        <small class="fw-bold">1-2</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="2-1">
+                        <small class="fw-bold">2-1</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="2-2">
+                        <small class="fw-bold">2-2</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="3-1">
+                        <small class="fw-bold">3-1</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="3-2">
+                        <small class="fw-bold">3-2</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="4-1">
+                        <small class="fw-bold">4-1</small>
+                    </div>
+                    <div class="col semester-tab position-relative py-2 text-white-50 cursor-pointer" 
+                         data-semester="4-2">
+                        <small class="fw-bold">4-2</small>
+                    </div>
                 </div>
+            </div>
+
+            <!-- 이수체계도 그리드 -->
+            <div class="flowchart-content" id="courseGrid">
+                <!-- JavaScript로 동적 생성 -->
             </div>
         </div>
     </div>
 
-    <br><br>
+    <!-- 확대/축소 컨트롤 -->
+    <div class="zoom-controls">
+        <button class="zoom-btn btn btn-primary" id="zoomIn" title="확대">
+            <i class="bi bi-plus-lg"></i>
+        </button>
+        <button class="zoom-btn btn btn-secondary" id="zoomReset" title="원래 크기">
+            <i class="bi bi-aspect-ratio"></i>
+        </button>
+        <button class="zoom-btn btn btn-outline-primary" id="zoomOut" title="축소">
+            <i class="bi bi-dash-lg"></i>
+        </button>
+    </div>
+
     <!-- 하단 고정 네비게이션 -->
-    <nav class="navbar bg-white bottom-nav fixed-bottom">
-      <div class="container-fluid px-0">
-        <div class="d-flex justify-content-around w-100">
-          <a class="nav-link active text-center" href="/dashboard">
-            <i class="bi bi-house-fill"></i>
-            홈
-          </a>
-          <a class="nav-link text-center" href="/grade-management">
-            <i class="bi bi-journal-bookmark"></i>
-            학점관리
-          </a>
-          <a class="nav-link text-center" href="/course-management">
-            <i class="bi bi-list-task"></i>
-            과목관리
-          </a>
-          <a class="nav-link text-center" href="/my">
-            <i class="bi bi-person-circle"></i>
-            MY
-          </a>
+    <nav class="navbar bg-white bottom-nav fixed-bottom border-top">
+        <div class="container-fluid px-0">
+            <div class="d-flex justify-content-around w-100">
+                <a class="nav-link text-center text-decoration-none" href="/dashboard">
+                    <i class="bi bi-house-fill"></i>
+                    <div><small>홈</small></div>
+                </a>
+                <a class="nav-link text-center text-decoration-none" href="/grade-management">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <div><small>학점관리</small></div>
+                </a>
+                <a class="nav-link active text-center text-decoration-none" href="/course-management">
+                    <i class="bi bi-list-task text-primary"></i>
+                    <div><small class="text-primary fw-bold">과목관리</small></div>
+                </a>
+                <a class="nav-link text-center text-decoration-none" href="/my">
+                    <i class="bi bi-person-circle"></i>
+                    <div><small>MY</small></div>
+                </a>
+            </div>
         </div>
-      </div>
     </nav>
 
     <script>
-        // 상태 변수들
-        let activeNav = '홈';
+        // 상태 변수
+        let activeNav = '과목관리';
         let activeCourseType = '전공교양';
         let activeSemester = '1-1';
+        let currentZoom = 1;
 
         // 과목 데이터
         const courseBoxesData = [
             // 1열 (1-1)
-            { type: 'yellow', text: '컴퓨팅사고', gridColumn: 1, gridRow: 5 },
-            { type: 'yellow', text: '컴퓨터프로그래밍', gridColumn: 1, gridRow: 6 },
-            { type: 'blue', text: '이산수학', gridColumn: 1, gridRow: 7 },
+            { type: 'white', text: '컴퓨팅사고', gridColumn: 1, gridRow: 5 },
+            { type: 'white', text: '컴퓨터프로그래밍', gridColumn: 1, gridRow: 6 },
+            { type: 'green', text: '이산수학', gridColumn: 1, gridRow: 7 },
 
             // 2열 (1-2)
-            { type: 'blue', text: '컴퓨터시스템입문', gridColumn: 2, gridRow: 5 },
-            { type: 'green', text: '컴퓨터프로그래밍및실습', gridColumn: 2, gridRow: 6 },
-            { type: 'blue', text: '선형대수', gridColumn: 2, gridRow: 7 },
+            { type: 'green', text: '컴퓨터시스템입문', gridColumn: 2, gridRow: 5 },
+            { type: 'yellow', text: '컴퓨터프로그래밍및실습', gridColumn: 2, gridRow: 6 },
+            { type: 'green', text: '선형대수', gridColumn: 2, gridRow: 7 },
 
             // 3열 (2-1)
-            { type: 'green', text: '전자기학', gridColumn: 3, gridRow: 2 },
-            { type: 'green', text: '전기회로', gridColumn: 3, gridRow: 3 },
-            { type: 'blue', text: '공업수학1', gridColumn: 3, gridRow: 4 },
+            { type: 'red', text: '전자기학', gridColumn: 3, gridRow: 2 },
+            { type: 'red', text: '전기회로', gridColumn: 3, gridRow: 3 },
+            { type: 'green', text: '공업수학1', gridColumn: 3, gridRow: 4 },
             { type: 'green', text: '논리회로', gridColumn: 3, gridRow: 5 },
-            { type: 'blue', text: '자료구조', gridColumn: 3, gridRow: 6 },
+            { type: 'yellow', text: '자료구조', gridColumn: 3, gridRow: 6 },
             { type: 'blue', text: '프로그래밍이론', gridColumn: 3, gridRow: 7 },
-            { type: 'red', text: '오픈소스SW및실습', gridColumn: 3, gridRow: 8 },
+            { type: 'blue', text: '오픈소스SW및실습', gridColumn: 3, gridRow: 8 },
 
             // 4열 (2-2)
-            { type: 'green', text: '전자공학및실험', gridColumn: 4, gridRow: 3 },
-            { type: 'blue', text: '공업수학2', gridColumn: 4, gridRow: 4 },
+            { type: 'red', text: '전자공학및실험', gridColumn: 4, gridRow: 3 },
+            { type: 'green', text: '공업수학2', gridColumn: 4, gridRow: 4 },
             { type: 'green', text: '마이크로프로세서', gridColumn: 4, gridRow: 5 },
             { type: 'blue', text: '알고리즘', gridColumn: 4, gridRow: 6 },
-            { type: 'purple', text: '객체지향프로그래밍', gridColumn: 4, gridRow: 7 },
-            { type: 'darkblue', text: '웹프로그래밍', gridColumn: 4, gridRow: 8 },
-            { type: 'red', text: '확률과통계', gridColumn: 4, gridRow: 9 },
+            { type: 'blue', text: '객체지향프로그래밍', gridColumn: 4, gridRow: 7 },
+            { type: 'blue', text: '웹프로그래밍', gridColumn: 4, gridRow: 8 },
+            { type: 'green', text: '확률과통계', gridColumn: 4, gridRow: 9 },
 
             // 5열 (3-1)
-            { type: 'green', text: '제어공학', gridColumn: 5, gridRow: 2 },
-            { type: 'green', text: '디지털신호처리', gridColumn: 5, gridRow: 3 },
-            { type: 'blue', text: '컴퓨터구조', gridColumn: 5, gridRow: 4 },
+            { type: 'red', text: '제어공학', gridColumn: 5, gridRow: 2 },
+            { type: 'red', text: '디지털신호처리', gridColumn: 5, gridRow: 3 },
+            { type: 'green', text: '컴퓨터구조', gridColumn: 5, gridRow: 4 },
             { type: 'green', text: '시스템프로그래밍', gridColumn: 5, gridRow: 5 },
             { type: 'blue', text: '데이터마이닝', gridColumn: 5, gridRow: 6 },
-            { type: 'purple', text: '컴퓨터그래픽스', gridColumn: 5, gridRow: 7 },
-            { type: 'darkblue', text: '설계패턴', gridColumn: 5, gridRow: 8 },
-            { type: 'red', text: '데이터통신', gridColumn: 5, gridRow: 9 },
+            { type: 'blue', text: '컴퓨터그래픽스', gridColumn: 5, gridRow: 7 },
+            { type: 'blue', text: '설계패턴', gridColumn: 5, gridRow: 8 },
+            { type: 'green', text: '데이터통신', gridColumn: 5, gridRow: 9 },
 
             // 6열 (3-2)
             { type: 'green', text: '공학영어프레젠테이션', gridColumn: 6, gridRow: 1 },
-            { type: 'green', text: '전기기기', gridColumn: 6, gridRow: 2 },
+            { type: 'red', text: '전기기기', gridColumn: 6, gridRow: 2 },
             { type: 'green', text: '운영체제', gridColumn: 6, gridRow: 3 },
             { type: 'blue', text: '컴파일러구성론', gridColumn: 6, gridRow: 4 },
-            { type: 'green', text: '자연어처리', gridColumn: 6, gridRow: 5 },
+            { type: 'blue', text: '자연어처리', gridColumn: 6, gridRow: 5 },
             { type: 'blue', text: '기계학습', gridColumn: 6, gridRow: 6 },
-            { type: 'purple', text: '데이터베이스', gridColumn: 6, gridRow: 7 },
-            { type: 'darkblue', text: '소프트웨어공학', gridColumn: 6, gridRow: 8 },
-            { type: 'red', text: '컴퓨터네크워크', gridColumn: 6, gridRow: 9 },
-            { type: 'red', text: 'SW산학프로젝트', gridColumn: 6, gridRow: 10 },
+            { type: 'blue', text: '데이터베이스', gridColumn: 6, gridRow: 7 },
+            { type: 'blue', text: '소프트웨어공학', gridColumn: 6, gridRow: 8 },
+            { type: 'green', text: '컴퓨터네크워크', gridColumn: 6, gridRow: 9 },
+            { type: 'green', text: 'SW산학프로젝트', gridColumn: 6, gridRow: 10 },
 
             // 7열 (4-1)
-            { type: 'green', text: 'IOT시스템', gridColumn: 7, gridRow: 2 },
-            { type: 'red', text: '소셜네트워크분석', gridColumn: 7, gridRow: 3 },
-            { type: 'green', text: '고급문제해결기법및실습', gridColumn: 7, gridRow: 4 },
+            { type: 'red', text: 'IOT시스템', gridColumn: 7, gridRow: 2 },
+            { type: 'blue', text: '소셜네트워크분석', gridColumn: 7, gridRow: 3 },
+            { type: 'blue', text: '고급문제해결기법및실습', gridColumn: 7, gridRow: 4 },
             { type: 'blue', text: '컴퓨터비전', gridColumn: 7, gridRow: 5 },
-            { type: 'green', text: '빅데이터처리', gridColumn: 7, gridRow: 6 },
+            { type: 'blue', text: '빅데이터처리', gridColumn: 7, gridRow: 6 },
             { type: 'blue', text: '데이터베이스설계', gridColumn: 7, gridRow: 7 },
-            { type: 'purple', text: '게임프로그래밍', gridColumn: 7, gridRow: 8 },
-            { type: 'red', text: '캡스톤설계및실습', gridColumn: 7, gridRow: 9 },
-            { type: 'darkblue', text: '멀티코어컴퓨팅', gridColumn: 7, gridRow: 10 },
+            { type: 'blue', text: '게임프로그래밍', gridColumn: 7, gridRow: 8 },
+            { type: 'yellow', text: '캡스톤설계및실습', gridColumn: 7, gridRow: 9 },
+            { type: 'green', text: '멀티코어컴퓨팅', gridColumn: 7, gridRow: 10 },
 
             // 8열 (4-2)
-            { type: 'green', text: '로봇공학', gridColumn: 8, gridRow: 3 },
-            { type: 'green', text: '인간컴퓨터상호작용', gridColumn: 8, gridRow: 4 },
+            { type: 'red', text: '로봇공학', gridColumn: 8, gridRow: 3 },
+            { type: 'blue', text: '인간컴퓨터상호작용', gridColumn: 8, gridRow: 4 },
             { type: 'blue', text: '컴퓨터보안', gridColumn: 8, gridRow: 5 },
-            { type: 'green', text: '모바일프로그래밍', gridColumn: 8, gridRow: 6 },
+            { type: 'blue', text: '모바일프로그래밍', gridColumn: 8, gridRow: 6 },
             { type: 'blue', text: '딥러닝', gridColumn: 8, gridRow: 7 },
-            { type: 'red', text: '엔터프라이즈프로그래밍', gridColumn: 8, gridRow: 8 },
-            { type: 'purple', text: 'SW연구프로젝트및실습', gridColumn: 8, gridRow: 9 },
-            { type: 'red', text: '블록체인의이해', gridColumn: 8, gridRow: 10 }
+            { type: 'blue', text: '엔터프라이즈프로그래밍', gridColumn: 8, gridRow: 8 },
+            { type: 'green', text: 'SW연구프로젝트및실습', gridColumn: 8, gridRow: 9 },
+            { type: 'green', text: '블록체인의이해', gridColumn: 8, gridRow: 10 }
         ];
 
-        // 과목 박스 렌더링 함수
+        // 과목 박스 렌더링
         function renderCourseBoxes() {
             const courseGrid = document.getElementById('courseGrid');
             courseGrid.innerHTML = '';
 
-            courseBoxesData.forEach((box, index) => {
+            courseBoxesData.forEach(box => {
                 const gridCell = document.createElement('div');
                 gridCell.className = `grid-cell ${box.type}`;
                 gridCell.style.gridColumn = box.gridColumn;
@@ -484,84 +404,70 @@
 
                 const flowBox = document.createElement('div');
                 flowBox.className = 'flow-box';
-                
-                // 줄바꿈 처리
-                const lines = box.text.split('\n');
-                lines.forEach((line, i) => {
-                    const span = document.createElement('span');
-                    span.textContent = line;
-                    flowBox.appendChild(span);
-                    if (i < lines.length - 1) {
-                        flowBox.appendChild(document.createElement('br'));
-                    }
-                });
+                flowBox.textContent = box.text;
 
                 gridCell.appendChild(flowBox);
                 courseGrid.appendChild(gridCell);
             });
         }
 
-        // 상단 버튼 클릭 핸들러
+        // 과목 분류 클릭 핸들러
         function handleCourseTypeClick(courseType) {
             activeCourseType = courseType;
             
-            // 모든 버튼에서 active 클래스 제거
-            document.querySelectorAll('.top-button').forEach(btn => {
-                btn.className = 'top-button';
+            // 모든 배지에서 active 클래스 제거
+            document.querySelectorAll('.course-type-badge').forEach(badge => {
+                badge.classList.remove('active', 'fw-bold');
+                badge.style.opacity = '0.6';
             });
 
-            // 클릭된 버튼에 해당 active 클래스 추가
-            const clickedButton = document.querySelector(`[data-course-type="${courseType}"]`);
-            if (courseType === '전공교양') {
-                clickedButton.classList.add('active-yellow');
-            } else if (courseType === '전공필수') {
-                clickedButton.classList.add('active-green');
-            } else if (courseType === '전공선택 일반') {
-                clickedButton.classList.add('active-gray');
-            } else if (courseType === '전공선택 컴퓨터') {
-                clickedButton.classList.add('active-purple');
-            } else if (courseType === '전공선택 전자') {
-                clickedButton.classList.add('active-black');
-            }
+            // 클릭된 배지 활성화
+            const clickedBadge = document.querySelector(`[data-course-type="${courseType}"]`);
+            clickedBadge.classList.add('active', 'fw-bold');
+            clickedBadge.style.opacity = '1';
         }
 
         // 학기 탭 클릭 핸들러
         function handleSemesterClick(semester) {
             activeSemester = semester;
             
-            // 모든 탭에서 active 클래스 제거
+            // 모든 탭 비활성화
             document.querySelectorAll('.semester-tab').forEach(tab => {
-                tab.classList.remove('active');
+                tab.classList.remove('active', 'text-white');
+                tab.classList.add('text-white-50');
             });
 
-            // 클릭된 탭에 active 클래스 추가
-            document.querySelector(`[data-semester="${semester}"]`).classList.add('active');
+            // 클릭된 탭 활성화
+            const clickedTab = document.querySelector(`[data-semester="${semester}"]`);
+            clickedTab.classList.add('active', 'text-white');
+            clickedTab.classList.remove('text-white-50');
         }
 
-        // 하단 네비게이션 클릭 핸들러
-        function handleNavClick(navItem) {
-            activeNav = navItem;
+        // 확대/축소 기능
+        function updateZoom(scale) {
+            currentZoom = Math.max(0.5, Math.min(2, scale));
+            const scaleableContent = document.querySelector('.scaleable-content');
+            scaleableContent.style.transform = `scale(${currentZoom})`;
             
-            // 모든 네비게이션 아이템에서 active 클래스 제거
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // 클릭된 아이템에 active 클래스 추가
-            document.querySelector(`[data-nav="${navItem}"]`).classList.add('active');
+            // 확대 시 컨테이너 높이 조정
+            if (currentZoom !== 1) {
+                document.body.style.paddingTop = '20px';
+            } else {
+                document.body.style.paddingTop = '0';
+            }
         }
 
-        // 이벤트 리스너 바인딩 함수
+        // 이벤트 리스너 등록
         function bindEventListeners() {
-            // 상단 버튼 이벤트
-            document.querySelectorAll('.top-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const courseType = button.getAttribute('data-course-type');
+            // 과목 분류 클릭
+            document.querySelectorAll('.course-type-badge').forEach(badge => {
+                badge.addEventListener('click', () => {
+                    const courseType = badge.getAttribute('data-course-type');
                     handleCourseTypeClick(courseType);
                 });
             });
 
-            // 학기 탭 이벤트
+            // 학기 탭 클릭
             document.querySelectorAll('.semester-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const semester = tab.getAttribute('data-semester');
@@ -569,19 +475,27 @@
                 });
             });
 
-            // 하단 네비게이션 이벤트
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const navItem = item.getAttribute('data-nav');
-                    handleNavClick(navItem);
-                });
+            // 확대/축소 버튼
+            document.getElementById('zoomIn').addEventListener('click', () => {
+                updateZoom(currentZoom + 0.2);
+            });
+            
+            document.getElementById('zoomOut').addEventListener('click', () => {
+                updateZoom(currentZoom - 0.2);
+            });
+            
+            document.getElementById('zoomReset').addEventListener('click', () => {
+                updateZoom(1);
             });
         }
 
-        // 초기화 함수
+        // 초기화
         function init() {
             renderCourseBoxes();
             bindEventListeners();
+            
+            // 초기 분류 설정
+            handleCourseTypeClick('전공교양');
         }
 
         // DOM 로드 완료 시 초기화

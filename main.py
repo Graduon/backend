@@ -115,6 +115,13 @@ async def credit_status():
 async def my():
     return FileResponse("static/frontend/my.html")
 
+@app.get("/course-management",
+         summary="이수체계표",
+         description="이수체계표 페이지를 반환합니다.",
+         response_class=FileResponse)
+async def course_management():
+    return FileResponse("static/frontend/course_management.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",

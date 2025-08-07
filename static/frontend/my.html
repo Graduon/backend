@@ -58,14 +58,11 @@
     <!-- 프로필 블록 -->
     <section class="d-flex align-items-center gap-3 mb-4">
         <div class="position-relative">
-<!--            TODO: 프로필 사진 불러오기. 만약 프로필 사진이 없으면 지금 설정된 기본 아이콘 표시-->
             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:100px; height:100px;">
                 <i class="bi bi-person-fill text-light fs-1"></i>
             </div>
         </div>
 
-<!--        TODO: 모든 user-name 클래스에 사용자 이름 표시-->
-<!--        TODO: 모든 student-id 클래스에 사용자 학번 표시-->
         <div>
             <h2 class="h5 fw-bold mb-1">
                 <span class="text-primary user-name">이름</span>
@@ -76,9 +73,6 @@
     </section>
 
     <!-- 학점 진행률 -->
-    <!--        TODO: 학점 진행률 표시-->
-<!--    참고사항: 전공에는 전공필수, 전공선택(컴퓨터), 전공선택(일반), 전공선택(전자)로 구분되어 있음. 전공 과목에서 이들을 분류하는 방법은 과목 이름을 봐야함.-->
-<!--    전공필수 배열, 전공선택(컴퓨터) 배열, 전공선택(일반) 배열, 전공선택(전자) 배열이 있다고 가정하고, 각 배열에서 이름을 조회해보는 방식으로 구현할 수 있음.-->
     <section class="mb-5">
         <div class="text-end text-muted small mb-2">총 이수 학점: 0%</div>
         <div class="progress mb-3" style="height:1.25rem;">
@@ -130,7 +124,6 @@
                         <input type="text" id="studentId" class="form-control student-id" value="" readonly>
                     </div>
                     <div class="mb-3">
-<!--                        TODO: 사용자가 어떤 방식으로 로그인했는지 표시(email, 카카오, 네이버 등)-->
                     </div>
                 </div>
             </div>
@@ -145,7 +138,6 @@
             </h2>
             <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#profileAccordion">
                 <div class="accordion-body">
-<!--                    TODO: current-credit, graduation-credit, retake-credit, major-credit, nonmajor-credit에 적절히 값 넣기-->
                     <div class="mb-3">
                         <label class="form-label small text-muted">이수 학점</label>
                         <div class="form-control d-flex justify-content-between">
@@ -182,7 +174,6 @@
             <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#profileAccordion">
                 <div class="accordion-body">
                     <a class="btn btn-outline-secondary w-100 mb-2" href="/">다른 계정으로 로그인</a>
-<!--                    TODO: 로그아웃 누르면 /logout 호출. 이후 수동으로 / 페이지로 이동해야 함.-->
                     <button class="btn btn-outline-primary w-100">
                         <i class="bi bi-box-arrow-right me-1"></i> 로그아웃
                     </button>
@@ -223,27 +214,70 @@
 <script src="/static/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // 전공 과목 분류 배열들
+    // 전공 과목 분류 배열들 (course_management.html의 courseBoxesData 기반)
     const 전공필수 = [
-        "이산수학", "자료구조", "논리회로", "컴퓨터구조", "시스템프로그래밍", "알고리즘",
-        "운영체제", "데이터베이스", "컴퓨터네트워크", "소프트웨어공학", "프로그래밍언어론", 
-        "졸업논문", "미네르바 2", "미네르바 1"
+        "컴퓨터프로그래밍및실습",
+        "자료구조", 
+        "캡스톤설계및실습"
     ];
     
     const 전공선택_컴퓨터 = [
-        "컴파일러", "인공지능", "대학영어 2", "딥러닝", "컴퓨터그래픽스", "컴퓨터비전",
-        "자연어처리", "분산시스템", "클라우드컴퓨팅", "빅데이터", "웹프로그래밍", 
-        "모바일프로그래밍", "게임프로그래밍", "정보보안", "암호학"
+        "프로그래밍이론",
+        "오픈소스SW및실습", 
+        "알고리즘",
+        "객체지향프로그래밍",
+        "웹프로그래밍",
+        "데이터마이닝",
+        "컴퓨터그래픽스", 
+        "설계패턴",
+        "컴파일러구성론",
+        "자연어처리", 
+        "기계학습",
+        "데이터베이스", 
+        "소프트웨어공학",
+        "소셜네트워크분석",
+        "고급문제해결기법및실습", 
+        "컴퓨터비전",
+        "빅데이터처리", 
+        "데이터베이스설계",
+        "게임프로그래밍", 
+        "인간컴퓨터상호작용",
+        "컴퓨터보안", 
+        "모바일프로그래밍", 
+        "딥러닝",
+        "엔터프라이즈프로그래밍"
     ];
     
     const 전공선택_일반 = [
-        "수치해석", "선형대수", "확률통계", "공학수학", "디지털신호처리", "영상처리", 
-        "패턴인식", "최적화이론", "정보이론", "수학적모델링"
+        "이산수학",
+        "컴퓨터시스템입문", 
+        "선형대수",
+        "공업수학1", 
+        "논리회로",
+        "공업수학2", 
+        "마이크로프로세서", 
+        "확률과통계",
+        "컴퓨터구조", 
+        "시스템프로그래밍", 
+        "데이터통신",
+        "공학영어프레젠테이션", 
+        "운영체제",
+        "컴퓨터네크워크", 
+        "SW산학프로젝트",
+        "멀티코어컴퓨팅", 
+        "SW연구프로젝트및실습", 
+        "블록체인의이해"
     ];
     
     const 전공선택_전자 = [
-        "전자회로", "디지털회로", "마이크로프로세서", "임베디드시스템", "VLSI설계", 
-        "반도체공학", "통신시스템", "제어시스템", "로봇공학", "IoT시스템"
+        "전자기학", 
+        "전기회로",
+        "전자공학및실험", 
+        "제어공학",
+        "디지털신호처리", 
+        "전기기기",
+        "IOT시스템", 
+        "로봇공학"
     ];
 
     // 알림 함수
