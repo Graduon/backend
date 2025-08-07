@@ -250,7 +250,7 @@
         // 졸업 진행률 계산 및 업데이트
         const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
         const graduationProgress = Math.min(Math.floor(totalCredits / getCodeFromStudentId(courses.student_id) * 100), 100);
-        
+        console.log(graduationProgress);
         updateGraduationProgress(graduationProgress);
         
         showAlert(`${student.name}님, 환영합니다! 현재 졸업 학점 진행률: ${graduationProgress}%`, 'success');
@@ -279,15 +279,7 @@
     
     // 졸업 진행률 업데이트 함수
     function updateGraduationProgress(progress) {
-        document.getElementById("location1").innerHTML = (100 - progress) + '%';
-
-      // 텍스트 업데이트
-      const progressText = document.querySelector('.progress-text');
-      if (progressText) {
-        progressText.textContent = `${progress}%`;
-      }
-      
-      // 헤더의 진행률 텍스트 업데이트
+             // 헤더의 진행률 텍스트 업데이트
       const elements = document.querySelectorAll('*');
       elements.forEach(element => {
         if (element.childNodes.length > 0) {
@@ -298,6 +290,13 @@
           });
         }
       });
+        document.getElementById("location1").innerHTML = (100 - progress) + '%';
+
+      // 텍스트 업데이트
+      const progressText = document.querySelector('.progress-text');
+      if (progressText) {
+        progressText.textContent = `${progress}%`;
+      }
       
       // CSS progress bar 업데이트
       const progressCircle = document.querySelector('.progress-circle');

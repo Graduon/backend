@@ -287,14 +287,7 @@
 
     // 졸업 진행률 업데이트 함수
     function updateGraduationProgress(progress) {
-        let progress2 = 100 - progress;
-      // 텍스트 업데이트
-      const progressText = document.querySelector('.progress-text');
-      if (progressText) {
-        progressText.textContent = `${progress2}%`;
-      }
-
-      // 헤더의 진행률 텍스트 업데이트
+              // 헤더의 진행률 텍스트 업데이트
       const elements = document.querySelectorAll('*');
       elements.forEach(element => {
         if (element.childNodes.length > 0) {
@@ -305,6 +298,15 @@
           });
         }
       });
+
+        let progress2 = 100 - progress;
+      // 텍스트 업데이트
+      const progressText = document.querySelector('.progress-text');
+      if (progressText) {
+        progressText.textContent = `${progress2}%`;
+      }
+
+
 
       // CSS progress bar 업데이트
       const progressCircle = document.querySelector('.progress-circle');
