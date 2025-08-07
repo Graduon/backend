@@ -15,14 +15,30 @@
   <link href="/static/css/nav.css" rel="stylesheet">
 
     <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <!-- GmarketSans 글꼴 연결 -->
+    <style>
+      @font-face {
+        font-family: 'GmarketSans';
+        src: url('/static/asset/GmarketSansTTFLight.ttf') format('truetype');
+        font-weight: 300;
+      }
+      @font-face {
+        font-family: 'GmarketSans';
+        src: url('/static/asset/GmarketSansTTFMedium.ttf') format('truetype');
+        font-weight: 500;
+      }
+      @font-face {
+        font-family: 'GmarketSans';
+        src: url('/static/asset/GmarketSansTTFBold.ttf') format('truetype');
+        font-weight: 700;
+      }
+    </style>
     
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'GmarketSans', sans-serif !important;
             margin: 0;
             padding: 0;
             background-color: #f0f2f5;
