@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>내 프로필</title>
+
+    <!-- Bootstrap CSS & Icons -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/static/css/nav.css" rel="stylesheet">
+
+    <!-- 최소한의 사용자 정의 스타일 (요구 사항) -->
+    <style>
+        body {
+            background-color: #f8f9fc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main.container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<main class="container py-4">
+
+    <!-- 헤더 -->
+    <header class="mb-4 text-center">
+        <h1 class="fw-bold text-primary">내 프로필</h1>
+    </header>
+
+    <!-- 프로필 블록 -->
+    <section class="d-flex align-items-center gap-3 mb-4">
+        <div class="position-relative">
+<!--            TODO: 프로필 사진 불러오기. 만약 프로필 사진이 없으면 지금 설정된 기본 아이콘 표시-->
+            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:100px; height:100px;">
+                <i class="bi bi-person-fill text-light fs-1"></i>
+            </div>
+        </div>
+
+<!--        TODO: 모든 user-name 클래스에 사용자 이름 표시-->
+<!--        TODO: 모든 student-id 클래스에 사용자 학번 표시-->
+        <div>
+            <h2 class="h5 fw-bold mb-1">
+                <span class="text-primary user-name">이름</span>
+                <span class="text-secondary">/ 컴퓨터공학부</span>
+            </h2>
+            <small class="text-muted student-id">학번</small>
+        </div>
+    </section>
+
+    <!-- 학점 진행률 -->
+    <!--        TODO: 학점 진행률 표시-->
+<!--    참고사항: 전공에는 전공필수, 전공선택(컴퓨터), 전공선택(일반), 전공선택(전자)로 구분되어 있음. 전공 과목에서 이들을 분류하는 방법은 과목 이름을 봐야함.-->
+<!--    전공필수 배열, 전공선택(컴퓨터) 배열, 전공선택(일반) 배열, 전공선택(전자) 배열이 있다고 가정하고, 각 배열에서 이름을 조회해보는 방식으로 구현할 수 있음.-->
+    <section class="mb-5">
+        <div class="text-end text-muted small mb-2">총 이수 학점: 0%</div>
+        <div class="progress mb-3" style="height:1.25rem;">
+            <div class="progress-bar bg-primary"   style="width:0%"></div>
+            <div class="progress-bar bg-info"      style="width:0%"></div>
+            <div class="progress-bar bg-secondary" style="width:0%"></div>
+            <div class="progress-bar bg-warning text-dark" style="width:0%"></div>
+            <div class="progress-bar bg-success text-white" style="width:0%"></div>
+        </div>
+        <ul class="list-unstyled small">
+            <li class="d-flex align-items-center mb-1">
+                <span class="bg-primary   rounded-1 me-2" style="width:20px; height:20px;"></span> 전공필수 <span class="ms-auto">0%</span>
+            </li>
+            <li class="d-flex align-items-center mb-1">
+                <span class="bg-info      rounded-1 me-2" style="width:20px; height:20px;"></span> 전공선택(컴퓨터) <span class="ms-auto">0%</span>
+            </li>
+            <li class="d-flex align-items-center mb-1">
+                <span class="bg-secondary rounded-1 me-2" style="width:20px; height:20px;"></span> 전공선택(일반) <span class="ms-auto">0%</span>
+            </li>
+            <li class="d-flex align-items-center mb-1">
+                <span class="bg-warning   rounded-1 me-2" style="width:20px; height:20px;"></span> 전공선택(전자) <span class="ms-auto">0%</span>
+            </li>
+            <li class="d-flex align-items-center">
+                <span class="bg-success   rounded-1 me-2" style="width:20px; height:20px;"></span> 기타 <span class="ms-auto">0%</span>
+            </li>
+        </ul>
+    </section>
+
+    <hr>
+
+    <!-- 아코디언 -->
+    <div class="accordion" id="profileAccordion">
+
+        <!-- 내 정보 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    <i class="bi bi-person-circle me-2 text-primary"></i> 내 정보
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#profileAccordion">
+                <div class="accordion-body">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted" for="name">이름</label>
+                        <input type="text" id="name" class="form-control user-name" value="" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted" for="studentId">학번</label>
+                        <input type="text" id="studentId" class="form-control student-id" value="" readonly>
+                    </div>
+                    <div class="mb-3">
+<!--                        TODO: 사용자가 어떤 방식으로 로그인했는지 표시(email, 카카오, 네이버 등)-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 내 학점 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <i class="bi bi-mortarboard-fill me-2 text-primary"></i> 내 학점
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#profileAccordion">
+                <div class="accordion-body">
+<!--                    TODO: current-credit, graduation-credit, retake-credit, major-credit, nonmajor-credit에 적절히 값 넣기-->
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">이수 학점</label>
+                        <div class="form-control d-flex justify-content-between">
+                            <span class="fw-bold text-success" id="current-credit">0</span><span id="graduation-credit">/126</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">재수강 학점</label>
+                        <div class="form-control" id="retake-credit">0 학점</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">전공 학점</label>
+                        <div class="form-control" id="major-credit">0 학점</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">교양 및 기타 학점</label>
+                        <div class="form-control" id="nonmajor-credit">0 학점</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 계정 -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="bi bi-door-open-fill me-2 text-primary"></i> 계정
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#profileAccordion">
+                <div class="accordion-body">
+                    <a class="btn btn-outline-secondary w-100 mb-2" href="/">다른 계정으로 로그인</a>
+<!--                    TODO: 로그아웃 누르면 /logout 호출. 이후 수동으로 / 페이지로 이동해야 함.-->
+                    <button class="btn btn-outline-primary w-100">
+                        <i class="bi bi-box-arrow-right me-1"></i> 로그아웃
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<!-- 하단 네비게이션 -->
+<nav class="navbar bg-white bottom-nav fixed-bottom">
+    <div class="container-fluid px-0">
+        <div class="d-flex justify-content-around w-100">
+            <a class="nav-link text-center" href="/dashboard">
+                <i class="bi bi-house"></i>
+                홈
+            </a>
+            <a class="nav-link text-center" href="/grade-management">
+                <i class="bi bi-journal-bookmark"></i>
+                학점관리
+            </a>
+            <a class="nav-link text-center" href="/course-management">
+                <i class="bi bi-list-task"></i>
+                과목관리
+            </a>
+            <a class="nav-link active text-center" href="/my">
+                <i class="bi bi-person-circle"></i>
+                MY
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Bootstrap JS -->
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 전공 과목 분류 배열들
+    const 전공필수 = [
+        "이산수학", "자료구조", "논리회로", "컴퓨터구조", "시스템프로그래밍", "알고리즘",
+        "운영체제", "데이터베이스", "컴퓨터네트워크", "소프트웨어공학", "프로그래밍언어론", 
+        "졸업논문", "미네르바 2", "미네르바 1"
+    ];
+    
+    const 전공선택_컴퓨터 = [
+        "컴파일러", "인공지능", "대학영어 2", "딥러닝", "컴퓨터그래픽스", "컴퓨터비전",
+        "자연어처리", "분산시스템", "클라우드컴퓨팅", "빅데이터", "웹프로그래밍", 
+        "모바일프로그래밍", "게임프로그래밍", "정보보안", "암호학"
+    ];
+    
+    const 전공선택_일반 = [
+        "수치해석", "선형대수", "확률통계", "공학수학", "디지털신호처리", "영상처리", 
+        "패턴인식", "최적화이론", "정보이론", "수학적모델링"
+    ];
+    
+    const 전공선택_전자 = [
+        "전자회로", "디지털회로", "마이크로프로세서", "임베디드시스템", "VLSI설계", 
+        "반도체공학", "통신시스템", "제어시스템", "로봇공학", "IoT시스템"
+    ];
+
+    // 알림 함수
+    function showAlert(message, type = 'info') {
+        const existingAlert = document.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        document.body.appendChild(alertDiv);
+
+        const timeout = (type === 'danger' || type === 'warning') ? 5000 : 3000;
+        setTimeout(() => {
+            if (alertDiv && alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, timeout);
+    }
+
+    // 페이지 초기화 함수
+    async function initializeMyPage() {
+        try {
+            // 학생 상태 확인
+            const statusResponse = await fetch('/student/status');
+            
+            if (statusResponse.status === 401) {
+                showAlert('로그인이 필요합니다. 로그인 페이지로 이동합니다.', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                return;
+            }
+
+            if (statusResponse.status !== 200) {
+                throw new Error(`학생 상태 확인 실패: ${statusResponse.status}`);
+            }
+
+            const statusData = await statusResponse.json();
+
+            if (!statusData.has_student_info) {
+                showAlert('학생 정보를 먼저 등록해주세요.', 'info');
+                setTimeout(() => {
+                    window.location.href = '/fill-student-info';
+                }, 2000);
+                return;
+            }
+
+            // 학생 정보와 과목 데이터 로드
+            await loadUserData(statusData.student);
+
+        } catch (error) {
+            console.error('My page initialization error:', error);
+            showAlert('페이지를 불러오는 중 오류가 발생했습니다. 페이지를 새로고침해주세요.', 'danger');
+        }
+    }
+
+    // 사용자 데이터 로드 함수
+    async function loadUserData(student) {
+        try {
+            // 사용자 정보 업데이트
+            updateUserInfo(student);
+
+            // 과목 데이터 로드
+            const coursesResponse = await fetch('/course/all');
+            
+            if (coursesResponse.status === 401) {
+                window.location.href = '/';
+                return;
+            }
+
+            if (coursesResponse.status !== 200) {
+                throw new Error(`과목 데이터 로드 실패: ${coursesResponse.status}`);
+            }
+
+            const courses = await coursesResponse.json();
+            
+            // 학점 정보 계산 및 업데이트
+            updateCreditInfo(courses, student.student_id);
+            updateProgressBars(courses, student.student_id);
+
+        } catch (error) {
+            console.error('User data loading error:', error);
+            showAlert('데이터를 불러오는 중 오류가 발생했습니다.', 'danger');
+        }
+    }
+
+    // 사용자 정보 업데이트 함수
+    function updateUserInfo(student) {
+        // 사용자 이름 업데이트
+        const userNameElements = document.querySelectorAll('.user-name');
+        userNameElements.forEach(element => {
+            if (element.tagName === 'INPUT') {
+                element.value = student.name;
+            } else {
+                element.textContent = student.name;
+            }
+        });
+
+        // 학번 업데이트
+        const studentIdElements = document.querySelectorAll('.student-id');
+        studentIdElements.forEach(element => {
+            if (element.tagName === 'INPUT') {
+                element.value = student.student_id;
+            } else {
+                element.textContent = student.student_id;
+            }
+        });
+
+        // 프로필 이미지 처리 (OAuth 사용자인 경우)
+        updateProfileImage(student);
+
+        // 로그인 방식 표시
+        updateLoginMethod(student);
+    }
+
+    // 프로필 이미지 업데이트 함수
+    function updateProfileImage(student) {
+        const profileDiv = document.querySelector('.bg-primary.rounded-circle');
+        
+        // OAuth 프로필 이미지가 있는 경우
+        if (student.google_user_id || student.naver_user_id || student.kakao_user_id) {
+            // 실제로는 OAuth 사용자 정보에서 프로필 이미지 URL을 가져와야 하지만
+            // 현재 Student 모델에는 프로필 이미지 URL이 없으므로 기본 아이콘 유지
+            // 향후 개선 필요
+        }
+        
+        // 기본 아이콘 유지 (이미 설정되어 있음)
+    }
+
+    // 로그인 방식 표시 함수
+    function updateLoginMethod(student) {
+        const loginMethodDiv = document.querySelector('#collapseOne .accordion-body .mb-3:last-child');
+        
+        let loginMethod = '';
+        if (student.user_email) {
+            loginMethod = `이메일 (${student.user_email})`;
+        } else if (student.google_user_id) {
+            loginMethod = 'Google 계정';
+        } else if (student.naver_user_id) {
+            loginMethod = '네이버 계정';
+        } else if (student.kakao_user_id) {
+            loginMethod = '카카오 계정';
+        }
+
+        loginMethodDiv.innerHTML = `
+            <label class="form-label small text-muted">로그인 방식</label>
+            <input type="text" class="form-control" value="${loginMethod}" readonly>
+        `;
+    }
+
+    // 학점 정보 업데이트 함수
+    function updateCreditInfo(courses, studentId) {
+        // 졸업 요구 학점 (2025학번 이상: 126, 이전: 134)
+        const graduationCredit = (studentId >= "2025") ? 126 : 134;
+        
+        // 총 이수 학점 계산 (재수강은 최고 성적만)
+        const courseMap = new Map();
+        courses.forEach(course => {
+            const key = course.course_name;
+            if (!courseMap.has(key) || course.grade > courseMap.get(key).grade) {
+                courseMap.set(key, course);
+            }
+        });
+        
+        const validCourses = Array.from(courseMap.values());
+        const currentCredit = validCourses.reduce((sum, course) => sum + course.credits, 0);
+        
+        // 재수강 학점 계산
+        const retakeCourses = courses.filter(course => course.is_retake);
+        const retakeCredit = retakeCourses.reduce((sum, course) => sum + course.credits, 0);
+        
+        // 전공/교양 학점 계산
+        const majorCredit = validCourses.filter(course => course.is_major).reduce((sum, course) => sum + course.credits, 0);
+        const nonMajorCredit = currentCredit - majorCredit;
+
+        // UI 업데이트
+        document.getElementById('current-credit').textContent = currentCredit;
+        document.getElementById('graduation-credit').textContent = `/${graduationCredit}`;
+        document.getElementById('retake-credit').textContent = `${retakeCredit} 학점`;
+        document.getElementById('major-credit').textContent = `${majorCredit} 학점`;
+        document.getElementById('nonmajor-credit').textContent = `${nonMajorCredit} 학점`;
+    }
+
+    // 진행률 바 업데이트 함수
+    function updateProgressBars(courses, studentId) {
+        // 전체 이수 학점 계산 (재수강은 최고 성적만)
+        const courseMap = new Map();
+        courses.forEach(course => {
+            const key = course.course_name;
+            if (!courseMap.has(key) || course.grade > courseMap.get(key).grade) {
+                courseMap.set(key, course);
+            }
+        });
+        
+        const validCourses = Array.from(courseMap.values());
+        const totalCredits = validCourses.reduce((sum, course) => sum + course.credits, 0);
+        
+        // 졸업 요구 학점으로 전체 진행률 계산
+        const graduationCredit = (studentId >= "2025") ? 126 : 134;
+        const totalProgress = Math.min(Math.round((totalCredits / graduationCredit) * 100), 100);
+
+        // 전공 과목만 필터링하여 세부 분류
+        const majorCourses = validCourses.filter(course => course.is_major);
+
+        const requiredCourses = majorCourses.filter(course => 전공필수.includes(course.course_name));
+        const computerCourses = majorCourses.filter(course => 전공선택_컴퓨터.includes(course.course_name));
+        const generalCourses = majorCourses.filter(course => 전공선택_일반.includes(course.course_name));
+        const electronicsCourses = majorCourses.filter(course => 전공선택_전자.includes(course.course_name));
+
+        // 각 영역별 학점 계산
+        const requiredCredits = requiredCourses.reduce((sum, course) => sum + course.credits, 0);
+        const computerCredits = computerCourses.reduce((sum, course) => sum + course.credits, 0);
+        const generalCredits = generalCourses.reduce((sum, course) => sum + course.credits, 0);
+        const electronicsCredits = electronicsCourses.reduce((sum, course) => sum + course.credits, 0);
+
+        // 전공 과목 중 4가지 분류에 포함되지 않는 과목들
+        const classifiedMajorCourses = [...requiredCourses, ...computerCourses, ...generalCourses, ...electronicsCourses];
+        const unclassifiedMajorCourses = majorCourses.filter(course => 
+            !classifiedMajorCourses.some(classified => classified.course_name === course.course_name)
+        );
+        const unclassifiedMajorCredits = unclassifiedMajorCourses.reduce((sum, course) => sum + course.credits, 0);
+
+        // 전공이 아닌 과목들 (교양 등)
+        const nonMajorCourses = validCourses.filter(course => !course.is_major);
+        const nonMajorCredits = nonMajorCourses.reduce((sum, course) => sum + course.credits, 0);
+
+        // 교양/기타 = 전공 미분류 + 비전공
+        const otherCredits = unclassifiedMajorCredits + nonMajorCredits;
+
+        // 전체 학점에서 각 영역이 차지하는 비율을 진행률 바에 반영
+        const requiredRatio = totalCredits > 0 ? (requiredCredits / totalCredits) * totalProgress : 0;
+        const computerRatio = totalCredits > 0 ? (computerCredits / totalCredits) * totalProgress : 0;
+        const generalRatio = totalCredits > 0 ? (generalCredits / totalCredits) * totalProgress : 0;
+        const electronicsRatio = totalCredits > 0 ? (electronicsCredits / totalCredits) * totalProgress : 0;
+        const otherRatio = totalCredits > 0 ? (otherCredits / totalCredits) * totalProgress : 0;
+
+        // 진행률 바 스타일 업데이트
+        const progressBars = document.querySelectorAll('.progress-bar');
+        if (progressBars.length >= 5) {
+            progressBars[0].style.width = `${requiredRatio.toFixed(1)}%`;
+            //progressBars[0].textContent = requiredRatio > 0 ? `${requiredRatio.toFixed(0)}%` : '';
+            
+            progressBars[1].style.width = `${computerRatio.toFixed(1)}%`;
+            //progressBars[1].textContent = computerRatio > 0 ? `${computerRatio.toFixed(0)}%` : '';
+            
+            progressBars[2].style.width = `${generalRatio.toFixed(1)}%`;
+            //progressBars[2].textContent = generalRatio > 0 ? `${generalRatio.toFixed(0)}%` : '';
+            
+            progressBars[3].style.width = `${electronicsRatio.toFixed(1)}%`;
+            //progressBars[3].textContent = electronicsRatio > 0 ? `${electronicsRatio.toFixed(0)}%` : '';
+
+            progressBars[4].style.width = `${otherRatio.toFixed(1)}%`;
+            //progressBars[4].textContent = otherRatio > 0 ? `${otherRatio.toFixed(0)}%` : '';
+        }
+
+        // 텍스트로는 실제 학점수와 전체에서의 비율 표시
+        const progressTexts = document.querySelectorAll('.list-unstyled .ms-auto');
+        if (progressTexts.length >= 5) {
+            const requiredPercent = totalCredits > 0 ? Math.round((requiredCredits / totalCredits) * 100) : 0;
+            const computerPercent = totalCredits > 0 ? Math.round((computerCredits / totalCredits) * 100) : 0;
+            const generalPercent = totalCredits > 0 ? Math.round((generalCredits / totalCredits) * 100) : 0;
+            const electronicsPercent = totalCredits > 0 ? Math.round((electronicsCredits / totalCredits) * 100) : 0;
+            const otherPercent = totalCredits > 0 ? Math.round((otherCredits / totalCredits) * 100) : 0;
+
+            progressTexts[0].textContent = `${requiredCredits}학점 (${requiredPercent}%)`;
+            progressTexts[1].textContent = `${computerCredits}학점 (${computerPercent}%)`;
+            progressTexts[2].textContent = `${generalCredits}학점 (${generalPercent}%)`;
+            progressTexts[3].textContent = `${electronicsCredits}학점 (${electronicsPercent}%)`;
+            progressTexts[4].textContent = `${otherCredits}학점 (${otherPercent}%)`;
+        }
+
+        // 총 이수 학점 진행률 업데이트
+        const totalProgressText = document.querySelector('.text-end.text-muted.small');
+        totalProgressText.textContent = `총 이수 학점: ${totalCredits}학점 (${totalProgress}%)`;
+    }
+
+    // 로그아웃 함수
+    async function logout() {
+        try {
+            const response = await fetch('/logout');
+            
+            if (response.status === 200 || response.status === 302) {
+                showAlert('로그아웃되었습니다.', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } else {
+                throw new Error(`로그아웃 실패: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            // 로그아웃 실패해도 메인 페이지로 이동
+            window.location.href = '/';
+        }
+    }
+
+    // 페이지 로드시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeMyPage();
+        
+        // 로그아웃 버튼 이벤트 리스너 추가
+        const logoutBtn = document.querySelector('.btn-outline-primary');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

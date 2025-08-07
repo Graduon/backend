@@ -108,6 +108,13 @@ async def graduation_calculator():
 async def credit_status():
     return FileResponse("static/frontend/credit_status.html")
 
+@app.get("/my",
+         summary="마이페이지",
+         description="마이페이지를 반환합니다.",
+         response_class=FileResponse)
+async def my():
+    return FileResponse("static/frontend/my.html")
+
 @app.get("/ping",
          status_code=status.HTTP_204_NO_CONTENT,
          summary="서버 기동 확인",
